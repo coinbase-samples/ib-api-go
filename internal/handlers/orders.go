@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"github.com/cfluke-cb/ib-client-api/data"
+	"github.com/cfluke-cb/ib-client-api/model"
 )
 
-func PlaceOrder(req data.OrderRequest) (data.OrderResponse, error) {
-	body := data.OrderResponse{
+func PlaceOrder(req model.OrderRequest) (model.OrderResponse, error) {
+	body := model.OrderResponse{
 		OrderId: "12345",
 		Order:   req,
 	}

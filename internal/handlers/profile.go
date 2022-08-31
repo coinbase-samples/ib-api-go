@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"github.com/cfluke-cb/ib-client-api/data"
+	"github.com/cfluke-cb/ib-client-api/model"
 )
 
-func FetchProfile(id string) (data.ProfileResponse, error) {
-	body := data.ProfileResponse{
+func FetchProfile(id string) (model.ProfileResponse, error) {
+	body := model.ProfileResponse{
 		UserId:      id,
 		Email:       "jay.parisi@coinbase.com",
 		Name:        "Jay Parisi",

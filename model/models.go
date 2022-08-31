@@ -1,7 +1,4 @@
-package data
-
-type Models struct {
-}
+package model
 
 type ProfileResponse struct {
 	UserId      string   `json:"userId"`

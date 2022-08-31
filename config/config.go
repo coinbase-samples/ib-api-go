@@ -1,4 +1,4 @@
-package data
+package config
 
 import (
 	"fmt"
@@ -8,8 +8,13 @@ import (
 )
 
 type AppConfig struct {
-	NftPortKey string `mapstructure:"NFT_PORT_KEY"`
-	InfoLog    *log.Logger
+	Port       string `mapstructure:"PORT"`
+	ClientId   string `mapstructure:"COGNITO_APP_CLIENT_ID"`
+	UserPoolId string `mapstructure:"COGNITO_USER_POOL_ID"`
+	Env        string `mapstructure:"ENV_NAME"`
+	Region     string `mapstructure:"REGION"`
+
+	InfoLog *log.Logger
 }
 
 func Setup(app *AppConfig) {

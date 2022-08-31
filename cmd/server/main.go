@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -12,18 +11,14 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/cfluke-cb/ib-client-api/data"
+	"github.com/cfluke-cb/ib-client-api/config"
 	restHandlers "github.com/cfluke-cb/ib-client-api/internal/handlers"
+	"github.com/cfluke-cb/ib-client-api/model"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
-const (
-	webPort  = "8443"
-	gRpcPort = "50001"
-)
-
-func setupRoutes(router *mux.Router, app data.AppConfig) {
+func setupRoutes(router *mux.Router, app config.AppConfig) {
 
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -54,7 +49,7 @@ func setupRoutes(router *mux.Router, app data.AppConfig) {
 			io.WriteString(w, "Could not parse request body")
 			return
 		}
-		var order = &data.OrderRequest{}
+		var order = &model.OrderRequest{}
 		json.Unmarshal(b, order)
 		body, err := restHandlers.PlaceOrder(*order)
 
@@ -74,44 +69,35 @@ func setupRoutes(router *mux.Router, app data.AppConfig) {
 func main() {
 
 	var wait time.Duration
-	var app data.AppConfig
+	var app config.AppConfig
 
-	data.Setup(&app)
+	config.Setup(&app)
 
 	router := mux.NewRouter()
 	setupRoutes(router, app)
 
-	port := "8443"
+	fmt.Printf("starting listener on: %s\n", app.Port)
 
-	if len(os.Getenv("PORT")) > 0 {
-		port = os.Getenv("PORT")
-	}
-
-	fmt.Printf("starting listener on: %s\n", port)
-
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"})
-	originsOk := handlers.AllowedOrigins([]string{"https://api.neoworks.dev", "https://localhost:8443", "http://localhost:8443"})
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"https://api.neoworks.xyz", "https://api-dev.neoworks.xyz", "https://localhost:8443", "http://localhost:8443", "https://localhost:4200", "http://localhost:4200"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	srv := &http.Server{
 		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(router),
-		Addr:         fmt.Sprintf(":%s", port),
+		Addr:         fmt.Sprintf(":%s", app.Port),
 		WriteTimeout: 40 * time.Second,
 		ReadTimeout:  40 * time.Second,
 	}
 
 	go func() {
-		prod := flag.Bool("prod", false, "a bool")
-		flag.Parse()
-
-		if *prod {
+		if app.Env != "local" {
 			if err := srv.ListenAndServeTLS("server.crt", "server.key"); err != nil {
-				//if err := srv.ListenAndServe(); err != nil {
-				log.Fatal("ListenAndServe: ", err)
+
+				log.Fatal("ListenAndServeTLS: ", err)
 			}
 		} else {
 			if err := srv.ListenAndServe(); err != nil {
-				//if err := srv.ListenAndServe(); err != nil {
+
 				log.Fatal("ListenAndServe: ", err)
 			}
 		}
