@@ -75,16 +75,24 @@ func main() {
 
 	router := mux.NewRouter()
 	setupRoutes(router, app)
-
-	fmt.Printf("starting listener on: %s\n", app.Port)
+	port := "8443"
+	if app.Port != "" {
+		port = app.Port
+	}
+	fmt.Printf("starting listener on: %s\n", port)
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"https://api.neoworks.xyz", "https://api-dev.neoworks.xyz", "https://localhost:8443", "http://localhost:8443", "https://localhost:4200", "http://localhost:4200"})
+	originsOk := handlers.AllowedOrigins([]string{"https://api.neoworks.xyz",
+		"https://api-dev.neoworks.xyz",
+		fmt.Sprintf("https://localhost:%s", port),
+		fmt.Sprintf("http://localhost:%s", port),
+		"https://localhost:4200",
+		"http://localhost:4200"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	srv := &http.Server{
 		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(router),
-		Addr:         fmt.Sprintf(":%s", app.Port),
+		Addr:         fmt.Sprintf(":%s", port),
 		WriteTimeout: 40 * time.Second,
 		ReadTimeout:  40 * time.Second,
 	}
