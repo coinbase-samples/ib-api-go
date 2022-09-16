@@ -1,0 +1,165 @@
+syntax = "proto3";
+
+package pkg.pbs.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/v1";
+
+enum OrderSide {
+  ORDER_SIDE_UNSPECIFIED = 0;
+  ORDER_SIDE_BUY = 1;
+  ORDER_SIDE_SELL = 2;
+}
+
+enum OrderType {
+  ORDER_TYPE_UNSPECIFIED = 0;
+  ORDER_TYPE_MARKET = 1;
+  ORDER_TYPE_LIMIT = 2;
+  // ORDER_TYPE_TWAP = 3;
+  // ORDER_TYPE_BLOCK = 4;
+}
+
+enum OrderTimeInForce {
+  ORDER_TIME_IN_FORCE_UNSPECIFIED = 0;
+  ORDER_TIME_IN_FORCE_GOOD_UNTIL_DATETIME = 1;
+  ORDER_TIME_IN_FORCE_GOOD_UNTIL_CANCELLED = 2;
+  ORDER_TIME_IN_FORCE_IMMEDIATE_OR_CANCEL = 3;
+  ORDER_TIME_IN_FORCE_FILL_OR_KILL = 4;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_OPEN = 2;
+  ORDER_STATUS_FILLED = 3;
+  ORDER_STATUS_CANCELLED = 4;
+  ORDER_STATUS_EXPIRED = 5;
+  ORDER_STATUS_FAILED = 6;
+}
+
+enum SortDirection {
+  SORT_DIRECTION_UNSPECIFIED = 0;
+  SORT_DIRECTION_ASC = 1;
+  SORT_DIRECTION_DESC = 2;
+}
+
+message CreateOrderRequest {
+  string product_id = 1 [(validate.rules).string.min_len = 3];
+  OrderSide side = 2;
+  OrderType type = 3;
+  float quantity = 4 [(validate.rules).float.gt = 0];
+  float limit_price = 5;
+  OrderTimeInForce time_in_force = 6;
+}
+
+message CreateOrderResponse {
+  string order_id = 1;
+  string owner_id = 2;
+  string product_id = 3;
+  OrderSide side = 4;
+  OrderType type = 5;
+  float quantity = 6;
+  float limit_price = 7;
+  OrderTimeInForce time_in_force = 8;
+  OrderStatus status = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  float filled_quantity = 12;
+  float filled_value = 13;
+  float average_filled_price = 14;
+  float commission = 15;
+  float exchange_fee = 16;
+}
+
+message ReadOrderRequest {
+  string id = 1 [(validate.rules).string.len = 29];
+}
+
+message ReadOrderResponse {
+  string order_id = 1;
+  string owner_id = 2;
+  string product_id = 3;
+  OrderSide side = 4;
+  OrderType type = 5;
+  float quantity = 6;
+  float limit_price = 7;
+  OrderTimeInForce time_in_force = 8;
+  OrderStatus status = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  float filled_quantity = 12;
+  float filled_value = 13;
+  float average_filled_price = 14;
+  float commission = 15;
+  float exchange_fee = 16;
+}
+
+message ListOrdersRequest {
+  string query = 1;
+  string cursor = 2;
+  SortDirection sort_direction = 3;
+}
+
+message ListOrdersResponse {
+  repeated ReadOrderResponse data = 1;
+  int32 count = 2;
+  string next_cursor = 3;
+  bool has_next = 4;
+}
+
+message UpdateOrderRequest {
+  string order_id = 1;
+  OrderStatus status = 2;
+  float filled_quantity = 3;
+  float filled_value = 4;
+  float average_filled_price = 5;
+  float commission = 6;
+  float exchange_fee = 7;
+}
+
+message UpdateOrderResponse {
+  string order_id = 1;
+  string owner_id = 2;
+  string product_id = 3;
+  OrderSide side = 4;
+  OrderType type = 5;
+  float quantity = 6;
+  float limit_price = 7;
+  OrderTimeInForce time_in_force = 8;
+  OrderStatus status = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  float filled_quantity = 12;
+  float filled_value = 13;
+  float average_filled_price = 14;
+  float commission = 15;
+  float exchange_fee = 16;
+}
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/order"
+      body: "*"
+    };
+  }
+  rpc ReadOrder(ReadOrderRequest) returns (ReadOrderResponse) {
+    option (google.api.http) = {
+      get: "/v1/order/{id}"
+    };
+  }
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse) {
+    option (google.api.http) = {
+      get: "/v1/orders"
+    };
+  }
+  rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
+    option (google.api.http) = {
+      put: "/v1/order/{order_id}",
+      body: "*"
+    };
+  }
+}
