@@ -10,13 +10,12 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"google.golang.org/grpc"
 )
 
 type BalanceServer struct {
 	balance.UnimplementedBalanceServiceServer
-	Tracer     trace.Tracer
-	ClientConn *grpc.ClientConn
+	Tracer      trace.Tracer
+	OrderClient ledger.LedgerClient
 }
 
 func (o *BalanceServer) ListBalances(ctx context.Context, req *balance.ListBalancesRequest) (*balance.ListBalancesResponse, error) {
@@ -31,8 +30,7 @@ func (o *BalanceServer) ListBalances(ctx context.Context, req *balance.ListBalan
 		trace.WithAttributes(attribute.String("UserId", authedUser.Id), attribute.String("BalanceUserId", req.Id)))
 	defer span.End()
 
-	client := ledger.NewLedgerClient(o.ClientConn)
-	balances, err := client.GetAccounts(ctx, &ledger.GetAccountsRequest{UserId: req.Id})
+	balances, err := o.OrderClient.GetAccounts(ctx, &ledger.GetAccountsRequest{UserId: req.Id})
 
 	if err != nil {
 		l.Warn("error listing balances", err)

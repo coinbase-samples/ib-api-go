@@ -75,7 +75,7 @@ message CreateOrderResponse {
 }
 
 message ReadOrderRequest {
-  string id = 1 [(validate.rules).string.len = 29];
+  string id = 1 [(validate.rules).string.len = 36];
 }
 
 message ReadOrderResponse {
@@ -139,6 +139,18 @@ message UpdateOrderResponse {
   float exchange_fee = 16;
 }
 
+message UpdateOrderFeedRequest {
+  string order_id = 1;
+  string client_order_id = 2;
+  string cum_qty = 3;
+  string leaves_qty = 4;
+  string avg_px = 5;
+  string fees = 6;
+  string status = 7;
+}
+
+message UpdateOrderFeedResponse {}
+
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
     option (google.api.http) = {
@@ -159,6 +171,12 @@ service OrderService {
   rpc UpdateOrder(UpdateOrderRequest) returns (UpdateOrderResponse) {
     option (google.api.http) = {
       put: "/v1/order/{order_id}",
+      body: "*"
+    };
+  }
+  rpc UpdateOrderFeed(UpdateOrderFeedRequest) returns (UpdateOrderFeedResponse) {
+    option (google.api.http) = {
+      post: "/v1/order/{order_id}/status",
       body: "*"
     };
   }

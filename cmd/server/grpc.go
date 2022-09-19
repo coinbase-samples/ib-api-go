@@ -12,6 +12,7 @@ import (
 
 	"github.com/coinbase-samples/ib-api-go/config"
 	grpcHandlers "github.com/coinbase-samples/ib-api-go/handlers"
+	"github.com/coinbase-samples/ib-api-go/pkg/pbs/ledger"
 	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
@@ -105,8 +106,8 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 	if err != nil {
 		logrusLogger.Warnln("Could not get order grpc connection")
 	}
-	v1.RegisterBalanceServiceServer(s, &grpcHandlers.BalanceServer{Tracer: tracer, ClientConn: oConn})
-	v1.RegisterOrderServiceServer(s, &grpcHandlers.OrderServer{Tracer: tracer, ClientConn: oConn})
+	client := ledger.NewLedgerClient(oConn)
+	v1.RegisterBalanceServiceServer(s, &grpcHandlers.BalanceServer{Tracer: tracer, OrderClient: client})
 
 	//setup health server
 	healthServer := health.NewServer()

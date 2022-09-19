@@ -377,10 +377,10 @@ func (m *ReadOrderRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetId()) != 29 {
+	if utf8.RuneCountInString(m.GetId()) != 36 {
 		err := ReadOrderRequestValidationError{
 			field:  "Id",
-			reason: "value length must be 29 runes",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
@@ -1208,3 +1208,221 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateOrderResponseValidationError{}
+
+// Validate checks the field values on UpdateOrderFeedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateOrderFeedRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateOrderFeedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateOrderFeedRequestMultiError, or nil if none found.
+func (m *UpdateOrderFeedRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateOrderFeedRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OrderId
+
+	// no validation rules for ClientOrderId
+
+	// no validation rules for CumQty
+
+	// no validation rules for LeavesQty
+
+	// no validation rules for AvgPx
+
+	// no validation rules for Fees
+
+	// no validation rules for Status
+
+	if len(errors) > 0 {
+		return UpdateOrderFeedRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateOrderFeedRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateOrderFeedRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateOrderFeedRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateOrderFeedRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateOrderFeedRequestMultiError) AllErrors() []error { return m }
+
+// UpdateOrderFeedRequestValidationError is the validation error returned by
+// UpdateOrderFeedRequest.Validate if the designated constraints aren't met.
+type UpdateOrderFeedRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateOrderFeedRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateOrderFeedRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateOrderFeedRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateOrderFeedRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateOrderFeedRequestValidationError) ErrorName() string {
+	return "UpdateOrderFeedRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateOrderFeedRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateOrderFeedRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateOrderFeedRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateOrderFeedRequestValidationError{}
+
+// Validate checks the field values on UpdateOrderFeedResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateOrderFeedResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateOrderFeedResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateOrderFeedResponseMultiError, or nil if none found.
+func (m *UpdateOrderFeedResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateOrderFeedResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateOrderFeedResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateOrderFeedResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateOrderFeedResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateOrderFeedResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateOrderFeedResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateOrderFeedResponseMultiError) AllErrors() []error { return m }
+
+// UpdateOrderFeedResponseValidationError is the validation error returned by
+// UpdateOrderFeedResponse.Validate if the designated constraints aren't met.
+type UpdateOrderFeedResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateOrderFeedResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateOrderFeedResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateOrderFeedResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateOrderFeedResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateOrderFeedResponseValidationError) ErrorName() string {
+	return "UpdateOrderFeedResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateOrderFeedResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateOrderFeedResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateOrderFeedResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateOrderFeedResponseValidationError{}
