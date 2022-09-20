@@ -146,7 +146,7 @@ message UpdateOrderFeedRequest {
   string leaves_qty = 4;
   string avg_px = 5;
   string fees = 6;
-  string status = 7;
+  OrderStatus status = 7;
 }
 
 message UpdateOrderFeedResponse {}

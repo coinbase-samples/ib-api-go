@@ -90,6 +90,10 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register balance:", err)
 	}
+	err = v1.RegisterAssetServiceHandler(context.Background(), gwmux, oConn)
+	if err != nil {
+		logrusLogger.Fatalln("Failed to register asset:", err)
+	}
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{
