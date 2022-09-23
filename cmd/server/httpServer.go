@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -72,6 +73,11 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		}
 		return metadata.New(md)
 	}))
+
+	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+		w.WriteHeader(http.StatusOK)
+		io.WriteString(w, "ok\n")
+	})
 
 	// Register Service Handlers
 	err = v1.RegisterOrderServiceHandler(context.Background(), gwmux, oConn)
