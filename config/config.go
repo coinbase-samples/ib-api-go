@@ -12,6 +12,7 @@ type AppConfig struct {
 	UserPoolId       string `mapstructure:"COGNITO_USER_POOL_ID"`
 	GrpcPort         string `mapstructure:"GRPC_PORT"`
 	OrderGrpcPort    string `mapstructure:"ORDER_GRPC_PORT"`
+	OrderRouteId     string `mapstructure:"ORDER_MGR_ROUTE_ID"`
 	Env              string `mapstructure:"ENV_NAME"`
 	LogLevel         string `mapstructure:"LOG_LEVEL"`
 	NetworkName      string `mapstructure:"ORDER_MGR_HOSTNAME"`
