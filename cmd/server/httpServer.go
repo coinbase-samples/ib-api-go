@@ -23,11 +23,9 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	} else {
 		dialOrderConn = fmt.Sprintf("%s:443", app.NetworkName)
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
-	defer cancel()
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
-	ctx = metadata.NewOutgoingContext(context.Background(), md)
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
@@ -42,7 +40,7 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 
 func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	dialProfileConn := fmt.Sprintf("localhost:%s", app.GrpcPort)
-
+	logrusLogger.Warnln("connecting to profile localhost grpc", dialProfileConn)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
@@ -83,6 +81,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "ok\n")
+		logrusLogger.Warnln("responding to health check")
 	})
 
 	// Register Service Handlers
