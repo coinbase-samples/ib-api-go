@@ -14,7 +14,7 @@ type AppConfig struct {
 	OrderGrpcPort    string `mapstructure:"ORDER_GRPC_PORT"`
 	Env              string `mapstructure:"ENV_NAME"`
 	LogLevel         string `mapstructure:"LOG_LEVEL"`
-	NetworkName      string `mapstructure:"LEDGER_HOSTNAME"`
+	NetworkName      string `mapstructure:"ORDER_MGR_HOSTNAME"`
 	DatabaseEndpoint string `mapstructure:"DB_ENDPOINT"`
 	ProfileTableName string `mapstructure:"PROFILE_TABLE"`
 	BalanceTableName string `mapstructure:"BALANCE_TABLE"`
@@ -34,7 +34,7 @@ func Setup(app *AppConfig) {
 	viper.SetDefault("GRPC_PORT", "8449")
 	viper.SetDefault("ORDER_GRPC_PORT", "8444")
 	viper.SetDefault("ENV_NAME", "local")
-	viper.SetDefault("LEDGER_HOSTNAME", "localhost")
+	viper.SetDefault("ORDER_MGR_HOSTNAME", "localhost")
 	viper.SetDefault("DB_ENDPOINT", "http://localhost:4566")
 	viper.SetDefault("PROFILE_TABLE", "Profile")
 	viper.SetDefault("BALANCE_TABLE", "Balance")
