@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -47,10 +46,8 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 	}()
 
 	// if local export both grpc and http endpoints
-	activePort := app.Port
-	if app.Env == "local" {
-		activePort = app.GrpcPort
-	}
+	activePort := app.GrpcPort
+
 	//setup conn
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", activePort))
 	if err != nil {
@@ -124,9 +121,9 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 
 	}()
 
-	var gwServer *http.Server
-	if app.Env == "local" {
-		setupHttp(app)
+	gwServer, err := setupHttp(app)
+	if err != nil {
+		logrusLogger.Warnln("issues setting up http server", err)
 	}
 
 	c := make(chan os.Signal, 1)
