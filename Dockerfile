@@ -8,7 +8,7 @@ RUN mkdir -p /build
 WORKDIR /build
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -o main ./cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -o main ./cmd/server/*.go
 
 RUN openssl genrsa -out server.key 2048
 RUN openssl ecparam -genkey -name secp384r1 -out server.key
