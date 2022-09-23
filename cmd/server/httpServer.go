@@ -20,32 +20,28 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	if app.Env == "local" {
 		dialOrderConn = fmt.Sprintf("%s:%s", app.NetworkName, app.OrderGrpcPort)
 	} else {
-		dialOrderConn = fmt.Sprintf("%s/orders", app.NetworkName)
+		dialOrderConn = fmt.Sprintf("%s:443", app.NetworkName)
 	}
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
 		context.Background(),
 		dialOrderConn,
-		grpc.WithBlock(),
+		//grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	return conn, err
 }
 
 func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
-	var dialProfileConn string
-	if app.Env == "local" {
-		dialProfileConn = fmt.Sprintf("%s:%s", app.NetworkName, app.GrpcPort)
-	} else {
-		dialProfileConn = fmt.Sprintf("%s/orders", app.NetworkName)
-	}
+	dialProfileConn := fmt.Sprintf("localhost:%s", app.GrpcPort)
+
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
 		context.Background(),
 		dialProfileConn,
-		grpc.WithBlock(),
+		//grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	return conn, err
