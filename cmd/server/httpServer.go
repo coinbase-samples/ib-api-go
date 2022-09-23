@@ -24,6 +24,8 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 		dialOrderConn = fmt.Sprintf("%s:443", app.NetworkName)
 	}
 
+	logrusLogger.Warnln("order dial", dialOrderConn)
+
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
