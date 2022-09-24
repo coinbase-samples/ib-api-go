@@ -38,6 +38,7 @@ func (am *authMiddleware) InterceptorNew() grpc.UnaryServerInterceptor {
 		})
 
 		if err != nil {
+			l.Warnf("could not validate token - %v", err)
 			return nil, err
 		}
 
@@ -52,6 +53,7 @@ func (am *authMiddleware) InterceptorNew() grpc.UnaryServerInterceptor {
 		newCtx = context.WithValue(ctx, model.UserCtxKey, authedUser)
 
 		if err != nil {
+			l.Warnf("could not add token to context - %v", err)
 			return nil, err
 		}
 		return handler(newCtx, req)
