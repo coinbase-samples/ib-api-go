@@ -81,9 +81,9 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	}))
 
 	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+		logrusLogger.Warnln("responding to health check")
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "ok\n")
-		logrusLogger.Warnln("responding to health check")
 	})
 
 	// Register Service Handlers
@@ -114,7 +114,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	logrusLogger.Warnln("starting http", originsOk, headersOk, methodsOk)
+	logrusLogger.Warnf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
 		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
 		Addr:         fmt.Sprintf(":%s", app.Port),
@@ -122,17 +122,18 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		ReadTimeout:  40 * time.Second,
 	}
 
-	logrusLogger.Println("Serving gRPC-Gateway on:", app.NetworkName, app.Port)
+	logrusLogger.Println("Warnf gRPC-Gateway on - %v - %v", app.NetworkName, app.Port)
 
 	go func() {
-		if app.Env == "production" {
-			if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
-				logrusLogger.Fatalln("ListenAndServeTLS: ", err)
-			}
-		} else {
+		if app.Env == "local" {
 			if err := gwServer.ListenAndServe(); err != nil {
 				logrusLogger.Fatalln("ListenAndServe: ", err)
 			}
+		} else {
+			if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
+				logrusLogger.Fatalln("ListenAndServeTLS: ", err)
+			}
+			logrusLogger.Warnf("started http")
 		}
 	}()
 
