@@ -107,6 +107,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{
 		"https://api.neoworks.dev",
+		"https://dev.neoworks.xyz",
 		fmt.Sprintf("https://localhost:%s", app.Port),
 		fmt.Sprintf("http://localhost:%s", app.Port),
 		"http://localhost:4200",
