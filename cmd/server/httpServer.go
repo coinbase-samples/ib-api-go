@@ -122,13 +122,14 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		ReadTimeout:  40 * time.Second,
 	}
 
-	logrusLogger.Println("Warnf gRPC-Gateway on - %v - %v", app.NetworkName, app.Port)
+	logrusLogger.Warnf("Warnf gRPC-Gateway on - %v - %v", app.NetworkName, app.Port)
 
 	go func() {
 		if app.Env == "local" {
 			if err := gwServer.ListenAndServe(); err != nil {
 				logrusLogger.Fatalln("ListenAndServe: ", err)
 			}
+			logrusLogger.Warnf("started http")
 		} else {
 			if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
 				logrusLogger.Fatalln("ListenAndServeTLS: ", err)
