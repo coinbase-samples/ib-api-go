@@ -23,4 +23,5 @@ COPY --from=builder /build/server.crt /server.crt
 COPY --from=builder /build/server.key /server.key
 
 EXPOSE 8443
+EXPOSE 8449
 CMD ["/main"]

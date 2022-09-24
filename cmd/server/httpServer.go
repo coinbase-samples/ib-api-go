@@ -67,7 +67,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	if err != nil {
 		logrusLogger.Fatalln("Failed to dial server:", err)
 	}
-	logrusLogger.Debugln("Connected to profile")
+	logrusLogger.Warnln("Connected to profile")
 
 	gwmux := runtime.NewServeMux(runtime.WithMetadata(func(ctx context.Context, r *http.Request) metadata.MD {
 		md := make(map[string]string)
@@ -114,6 +114,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
+	logrusLogger.Warnln("starting http", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
 		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
 		Addr:         fmt.Sprintf(":%s", app.Port),
