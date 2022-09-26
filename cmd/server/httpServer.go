@@ -50,7 +50,7 @@ func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	conn, err := grpc.DialContext(
 		context.Background(),
 		dialProfileConn,
-		//grpc.WithBlock(),
+		grpc.WithBlock(),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	return conn, err
@@ -125,7 +125,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		ReadTimeout:  40 * time.Second,
 	}
 
-	logrusLogger.Warnf("Warnf gRPC-Gateway on - %v - %v", app.NetworkName, app.Port)
+	logrusLogger.Warnf("started gRPC-Gateway on - %v", app.Port)
 
 	go func() {
 		if app.Env == "local" {
@@ -137,7 +137,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 			if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
 				logrusLogger.Fatalln("ListenAndServeTLS: ", err)
 			}
-			logrusLogger.Warnf("started http")
+			logrusLogger.Warnf("started https")
 		}
 	}()
 
