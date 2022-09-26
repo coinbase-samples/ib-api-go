@@ -30,7 +30,7 @@ func getProfileConnAddress(app config.AppConfig) string {
 	if app.Env == "local" {
 		return fmt.Sprintf("%s:%s", "0.0.0.0", app.GrpcPort)
 	}
-	return fmt.Sprintf("%s:443", "api-dev.neoworks.xyz")
+	return fmt.Sprintf("%s:%s", "api-dev.neoworks.xyz", app.GrpcPort)
 }
 
 func testOrderDial(app config.AppConfig) {
