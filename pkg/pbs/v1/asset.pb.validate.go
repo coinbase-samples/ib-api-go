@@ -335,6 +335,14 @@ func (m *Asset) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for MarketCap
+
+	// no validation rules for Volume
+
+	// no validation rules for Supply
+
+	// no validation rules for Direction
+
 	if len(errors) > 0 {
 		return AssetMultiError(errors)
 	}

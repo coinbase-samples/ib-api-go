@@ -4,6 +4,7 @@ package pkg.pbs.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/v1";
@@ -22,6 +23,10 @@ message Asset {
   string maxTransactionAmount = 5;
   string price = 6;
   google.protobuf.Timestamp createdAt = 7;
+  string marketCap = 8;
+  string volume = 9;
+  string supply = 10;
+  string direction = 11;
 }
 
 message GetAssetRequest {
@@ -36,6 +41,13 @@ service AssetService {
   rpc ListAssets(ListAssetsRequest) returns (ListAssetsResponse) {
     option (google.api.http) = {
       get: "/v1/assets"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "bearer"
+        }
+      }
     };
   }
 

@@ -72,16 +72,7 @@ func (m *CreateOrderRequest) validate(all bool) error {
 
 	// no validation rules for Type
 
-	if m.GetQuantity() <= 0 {
-		err := CreateOrderRequestValidationError{
-			field:  "Quantity",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Quantity
 
 	// no validation rules for LimitPrice
 

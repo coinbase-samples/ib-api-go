@@ -50,8 +50,8 @@ message CreateOrderRequest {
   string product_id = 1 [(validate.rules).string.min_len = 3];
   OrderSide side = 2;
   OrderType type = 3;
-  float quantity = 4 [(validate.rules).float.gt = 0];
-  float limit_price = 5;
+  string quantity = 4;
+  string limit_price = 5;
   OrderTimeInForce time_in_force = 6;
 }
 
@@ -61,17 +61,17 @@ message CreateOrderResponse {
   string product_id = 3;
   OrderSide side = 4;
   OrderType type = 5;
-  float quantity = 6;
-  float limit_price = 7;
+  string quantity = 6;
+  string limit_price = 7;
   OrderTimeInForce time_in_force = 8;
   OrderStatus status = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
-  float filled_quantity = 12;
-  float filled_value = 13;
-  float average_filled_price = 14;
-  float commission = 15;
-  float exchange_fee = 16;
+  string filled_quantity = 12;
+  string filled_value = 13;
+  string average_filled_price = 14;
+  string commission = 15;
+  string exchange_fee = 16;
 }
 
 message ReadOrderRequest {
@@ -84,17 +84,17 @@ message ReadOrderResponse {
   string product_id = 3;
   OrderSide side = 4;
   OrderType type = 5;
-  float quantity = 6;
-  float limit_price = 7;
+  string quantity = 6;
+  string limit_price = 7;
   OrderTimeInForce time_in_force = 8;
   OrderStatus status = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
-  float filled_quantity = 12;
-  float filled_value = 13;
-  float average_filled_price = 14;
-  float commission = 15;
-  float exchange_fee = 16;
+  string filled_quantity = 12;
+  string filled_value = 13;
+  string average_filled_price = 14;
+  string commission = 15;
+  string exchange_fee = 16;
 }
 
 message ListOrdersRequest {
@@ -113,11 +113,11 @@ message ListOrdersResponse {
 message UpdateOrderRequest {
   string order_id = 1;
   OrderStatus status = 2;
-  float filled_quantity = 3;
-  float filled_value = 4;
-  float average_filled_price = 5;
-  float commission = 6;
-  float exchange_fee = 7;
+  string filled_quantity = 3;
+  string filled_value = 4;
+  string average_filled_price = 5;
+  string commission = 6;
+  string exchange_fee = 7;
 }
 
 message UpdateOrderResponse {
@@ -126,17 +126,17 @@ message UpdateOrderResponse {
   string product_id = 3;
   OrderSide side = 4;
   OrderType type = 5;
-  float quantity = 6;
-  float limit_price = 7;
+  string quantity = 6;
+  string limit_price = 7;
   OrderTimeInForce time_in_force = 8;
   OrderStatus status = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
-  float filled_quantity = 12;
-  float filled_value = 13;
-  float average_filled_price = 14;
-  float commission = 15;
-  float exchange_fee = 16;
+  string filled_quantity = 12;
+  string filled_value = 13;
+  string average_filled_price = 14;
+  string commission = 15;
+  string exchange_fee = 16;
 }
 
 message UpdateOrderFeedRequest {
