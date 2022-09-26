@@ -26,13 +26,12 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 		dialOrderConn = fmt.Sprintf("%s:443", app.NetworkName)
 	}
 
-	logrusLogger.Warnln("order dial", dialOrderConn)
-
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-
+	logrusLogger.Warnln("order dial", dialOrderConn, md)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
+
 	conn, err := grpc.DialContext(
 		ctx,
 		dialOrderConn,

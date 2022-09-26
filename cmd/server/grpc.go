@@ -65,38 +65,38 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 	grpc_logrus.ReplaceGrpcLogger(logrusEntry)
 
 	var s *grpc.Server
-	/*
-		if app.Env != "local" {
-			// load tls for grpc
-			tlsCredentials, err := loadCredentials()
-			if err != nil {
-				logrusLogger.Fatalln("Cannot load TLS credentials: ", err)
-			}
 
-			s = grpc.NewServer(
-				grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-					grpc_ctxtags.UnaryServerInterceptor(),
-					otelgrpc.UnaryServerInterceptor(),
-					grpc_logrus.UnaryServerInterceptor(logrusEntry, opts...),
-					aw.InterceptorNew(),
-					grpc_validator.UnaryServerInterceptor(),
-					grpc_recovery.UnaryServerInterceptor(),
-				)),
-				grpc.Creds(tlsCredentials),
-			)
-		} else {
-	*/
-	s = grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpc_ctxtags.UnaryServerInterceptor(),
-			otelgrpc.UnaryServerInterceptor(),
-			grpc_logrus.UnaryServerInterceptor(logrusEntry, opts...),
-			aw.InterceptorNew(),
-			grpc_validator.UnaryServerInterceptor(),
-			grpc_recovery.UnaryServerInterceptor(),
-		)),
-	)
-	//}
+	if app.Env != "local" {
+		// load tls for grpc
+		tlsCredentials, err := loadCredentials()
+		if err != nil {
+			logrusLogger.Fatalln("Cannot load TLS credentials: ", err)
+		}
+
+		s = grpc.NewServer(
+			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+				grpc_ctxtags.UnaryServerInterceptor(),
+				otelgrpc.UnaryServerInterceptor(),
+				grpc_logrus.UnaryServerInterceptor(logrusEntry, opts...),
+				aw.InterceptorNew(),
+				grpc_validator.UnaryServerInterceptor(),
+				grpc_recovery.UnaryServerInterceptor(),
+			)),
+			grpc.Creds(tlsCredentials),
+		)
+	} else {
+
+		s = grpc.NewServer(
+			grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+				grpc_ctxtags.UnaryServerInterceptor(),
+				otelgrpc.UnaryServerInterceptor(),
+				grpc_logrus.UnaryServerInterceptor(logrusEntry, opts...),
+				aw.InterceptorNew(),
+				grpc_validator.UnaryServerInterceptor(),
+				grpc_recovery.UnaryServerInterceptor(),
+			)),
+		)
+	}
 
 	v1.RegisterProfileServiceServer(s, &grpcHandlers.ProfileServer{Tracer: tracer})
 
