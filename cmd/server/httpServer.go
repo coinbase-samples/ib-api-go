@@ -83,7 +83,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	}))
 
 	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-		logrusLogger.Debugln("responding to health check")
+		logrusLogger.Warnln("responding to health check")
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "ok\n")
 	})
