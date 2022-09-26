@@ -13,9 +13,8 @@ import (
 	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
 	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
@@ -27,12 +26,22 @@ func getOrderConnAddress(app config.AppConfig) string {
 	return fmt.Sprintf("%s:443", app.NetworkName)
 }
 
+func getProfileConnAddress(app config.AppConfig) string {
+	if app.Env == "local" {
+		return fmt.Sprintf("%s:%s", "0.0.0.0", app.GrpcPort)
+	}
+	return fmt.Sprintf("%s:443", "api-dev.neoworks.xyz")
+}
+
 func testOrderDial(app config.AppConfig) {
 	dialOrderConn := getOrderConnAddress(app)
 	grpc.EnableTracing = true
-
-	clientCreds, _ := loadTLSCredentials()
-
+	var clientCreds credentials.TransportCredentials
+	if app.Env != "local" {
+		clientCreds, _ = loadTLSCredentials()
+	} else {
+		clientCreds = insecure.NewCredentials()
+	}
 	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(clientCreds)) //insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -59,8 +68,12 @@ func testOrderDial(app config.AppConfig) {
 
 func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	dialOrderConn := getOrderConnAddress(app)
-
-	clientCreds, _ := loadTLSCredentials()
+	var clientCreds credentials.TransportCredentials
+	if app.Env != "local" {
+		clientCreds, _ = loadTLSCredentials()
+	} else {
+		clientCreds = insecure.NewCredentials()
+	}
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
@@ -78,7 +91,7 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 }
 
 func testProfileDial(app config.AppConfig) {
-	dialProfileConn := fmt.Sprintf("0.0.0.0:%s", app.Port) //app.GrpcPort)
+	dialProfileConn := getProfileConnAddress(app)
 	grpc.EnableTracing = true
 
 	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -102,7 +115,7 @@ func testProfileDial(app config.AppConfig) {
 }
 
 func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
-	dialProfileConn := fmt.Sprintf("localhost:%s", app.Port) //app.GrpcPort)
+	dialProfileConn := getProfileConnAddress(app)
 	logrusLogger.Warnln("connecting to profile localhost grpc", dialProfileConn)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
@@ -116,13 +129,13 @@ func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 }
 
 func grpcHandlerFunc(grpcServer *grpc.Server, otherHandler http.Handler) http.Handler {
-	return h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
 			grpcServer.ServeHTTP(w, r)
 		} else {
 			otherHandler.ServeHTTP(w, r)
 		}
-	}), &http2.Server{})
+	})
 }
 
 func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, error) {
@@ -133,14 +146,13 @@ func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, err
 	}
 	logrusLogger.Warnln("Connected to order manager")
 
-	/*
-		logrusLogger.Warnln("dialing profile")
-		pConn, err := profileConn(app)
-		if err != nil {
-			logrusLogger.Fatalln("Failed to dial server:", err)
-		}
-		logrusLogger.Warnln("Connected to profile")
-	*/
+	logrusLogger.Warnln("dialing profile")
+	pConn, err := profileConn(app)
+	if err != nil {
+		logrusLogger.Fatalln("Failed to dial server:", err)
+	}
+	logrusLogger.Warnln("Connected to profile")
+
 	gwmux := runtime.NewServeMux(runtime.WithMetadata(func(ctx context.Context, r *http.Request) metadata.MD {
 		md := make(map[string]string)
 		if method, ok := runtime.RPCMethod(ctx); ok {
@@ -159,9 +171,9 @@ func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, err
 	})
 
 	// Register Service Handlers
-	//err = v1.RegisterProfileServiceHandler(context.Background(), gwmux, pConn)
-	dopts := []grpc.DialOption{grpc.WithInsecure()}
-	err = v1.RegisterProfileServiceHandlerFromEndpoint(context.Background(), gwmux, "localhost:8443", dopts)
+	err = v1.RegisterProfileServiceHandler(context.Background(), gwmux, pConn)
+	//dopts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	//err = v1.RegisterProfileServiceHandlerFromEndpoint(context.Background(), gwmux, "localhost:8443", dopts)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register profile:", err)
 	}
@@ -196,8 +208,7 @@ func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, err
 
 	logrusLogger.Warnf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
-		Handler: grpcHandlerFunc(grpcServer, handlers.CORS(originsOk, headersOk, methodsOk)(gwmux)),
-		//h2c.NewHandler(handlers.CORS(originsOk, headersOk, methodsOk)(gwmux), &http2.Server{}),
+		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
 		Addr:         fmt.Sprintf(":%s", app.Port),
 		WriteTimeout: 40 * time.Second,
 		ReadTimeout:  40 * time.Second,
@@ -206,19 +217,17 @@ func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, err
 	logrusLogger.Warnf("started gRPC-Gateway on - %v", app.Port)
 
 	go func() {
-		/*
-			if app.Env == "local" {
-				if err := gwServer.ListenAndServe(); err != nil {
-					logrusLogger.Fatalln("ListenAndServe: ", err)
-				}
-				logrusLogger.Warnf("started http")
-			} else {
-		*/
-		if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
-			logrusLogger.Fatalln("ListenAndServeTLS: ", err)
+		if app.Env == "local" {
+			if err := gwServer.ListenAndServe(); err != nil {
+				logrusLogger.Fatalln("ListenAndServe: ", err)
+			}
+			logrusLogger.Warnf("started http")
+		} else {
+			if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
+				logrusLogger.Fatalln("ListenAndServeTLS: ", err)
+			}
+			logrusLogger.Warnf("started https")
 		}
-		logrusLogger.Warnf("started https")
-		//}
 	}()
 
 	return gwServer, nil

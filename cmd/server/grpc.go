@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"os/signal"
 	"time"
@@ -45,17 +46,17 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 			logrusLogger.Printf("Error shutting down tracer provider: %v", err)
 		}
 	}()
-	/*
-		// if local export both grpc and http endpoints
-		activePort := app.GrpcPort
 
-		//setup conn
+	// if local export both grpc and http endpoints
+	activePort := app.GrpcPort
 
-		lis, err := net.Listen("tcp", fmt.Sprintf(":%s", activePort))
-		if err != nil {
-			logrusLogger.Fatalln("Failed to listen for gRPC: %v", err)
-		}
-	*/
+	//setup conn
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", activePort))
+	if err != nil {
+		logrusLogger.Fatalln("Failed to listen for gRPC: %v", err)
+	}
+
 	// Logrus entry is used, allowing pre-definition of certain fields by the user.
 	// See example setup here https://github.com/grpc-ecosystem/go-grpc-middleware/blob/master/logging/logrus/examples_test.go
 	logrusEntry := log.NewEntry(logrusLogger)
@@ -117,15 +118,14 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 
 	reflection.Register(s)
 
-	/*
-		fmt.Printf("gRPC Server starting on port %s\n", activePort)
-			go func() {
-				if err := s.Serve(lis); err != nil {
-					fmt.Printf("Failed to listen for gRPC: %v", err)
-				}
+	fmt.Printf("gRPC Server starting on port %s\n", activePort)
+	go func() {
+		if err := s.Serve(lis); err != nil {
+			fmt.Printf("Failed to listen for gRPC: %v", err)
+		}
 
-			}()
-	*/
+	}()
+
 	testOrderDial(app)
 	testProfileDial(app)
 
