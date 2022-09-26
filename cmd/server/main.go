@@ -22,6 +22,7 @@ func main() {
 	fmt.Println("starting app with config", app)
 	logLevel, _ := log.ParseLevel("debug") //app.LogLevel)
 	logrusLogger.SetLevel(logLevel)
+	logrusLogger.SetFormatter(&log.JSONFormatter{})
 	//setup cognito client
 	cip := InitAuth(&app)
 	aw := authMiddleware{cip} //setup dynamodb connection
