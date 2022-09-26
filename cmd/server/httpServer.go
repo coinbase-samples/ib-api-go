@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/config"
@@ -28,12 +29,14 @@ func getOrderConnAddress(app config.AppConfig) string {
 
 func testOrderDial(app config.AppConfig) {
 	dialOrderConn := getOrderConnAddress(app)
+	grpc.EnableTracing = true
 
 	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
+
 	c := v1.NewAssetServiceClient(conn)
 
 	// Contact the server and print out its response.
@@ -43,6 +46,8 @@ func testOrderDial(app config.AppConfig) {
 	defer cancel()
 	logrusLogger.Warnf("sending order test %s - %v - %v", dialOrderConn, ctx, md)
 	r, err := c.ListAssets(ctx, &v1.ListAssetsRequest{})
+	grpc.EnableTracing = false
+
 	if err != nil {
 		logrusLogger.Warnf("could not greet order: %v", err)
 		return
@@ -69,7 +74,8 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 }
 
 func testProfileDial(app config.AppConfig) {
-	dialProfileConn := fmt.Sprintf("localhost:%s", app.GrpcPort)
+	dialProfileConn := fmt.Sprintf("localhost:%s", app.Port) //app.GrpcPort)
+	grpc.EnableTracing = true
 
 	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -82,6 +88,8 @@ func testProfileDial(app config.AppConfig) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	r, err := c.ReadProfile(ctx, &v1.ReadProfileRequest{Id: "c5af3271-7185-4a52-9d0c-1c4b418317d8"})
+	grpc.EnableTracing = false
+
 	if err != nil {
 		logrusLogger.Warnf("could not greet profile: %v", err)
 		return
@@ -90,7 +98,7 @@ func testProfileDial(app config.AppConfig) {
 }
 
 func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
-	dialProfileConn := fmt.Sprintf("localhost:%s", app.GrpcPort)
+	dialProfileConn := fmt.Sprintf("localhost:%s", app.Port) //app.GrpcPort)
 	logrusLogger.Warnln("connecting to profile localhost grpc", dialProfileConn)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
@@ -103,7 +111,17 @@ func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	return conn, err
 }
 
-func setupHttp(app config.AppConfig) (*http.Server, error) {
+func grpcHandlerFunc(grpcServer *grpc.Server, otherHandler http.Handler) http.Handler {
+	return h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+			grpcServer.ServeHTTP(w, r)
+		} else {
+			otherHandler.ServeHTTP(w, r)
+		}
+	}), &http2.Server{})
+}
+
+func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, error) {
 	logrusLogger.Warnln("dialing order manager")
 	oConn, err := orderConn(app)
 	if err != nil {
@@ -161,6 +179,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	originsOk := handlers.AllowedOrigins([]string{
 		"https://api.neoworks.dev",
 		"https://dev.neoworks.xyz",
+		"https://api-dev.neoworks.xyz",
 		fmt.Sprintf("https://localhost:%s", app.Port),
 		fmt.Sprintf("http://localhost:%s", app.Port),
 		"http://localhost:4200",
@@ -170,7 +189,8 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 
 	logrusLogger.Warnf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
-		Handler:      h2c.NewHandler(handlers.CORS(originsOk, headersOk, methodsOk)(gwmux), &http2.Server{}),
+		Handler: grpcHandlerFunc(grpcServer, handlers.CORS(originsOk, headersOk, methodsOk)(gwmux)),
+		//h2c.NewHandler(handlers.CORS(originsOk, headersOk, methodsOk)(gwmux), &http2.Server{}),
 		Addr:         fmt.Sprintf(":%s", app.Port),
 		WriteTimeout: 40 * time.Second,
 		ReadTimeout:  40 * time.Second,

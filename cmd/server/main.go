@@ -20,7 +20,7 @@ func main() {
 
 	config.Setup(&app)
 	fmt.Println("starting app with config", app)
-	logLevel, _ := log.ParseLevel(app.LogLevel)
+	logLevel, _ := log.ParseLevel("debug") //app.LogLevel)
 	logrusLogger.SetLevel(logLevel)
 	//setup cognito client
 	cip := InitAuth(&app)
