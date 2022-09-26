@@ -133,13 +133,14 @@ func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, err
 	}
 	logrusLogger.Warnln("Connected to order manager")
 
-	logrusLogger.Warnln("dialing profile")
-	pConn, err := profileConn(app)
-	if err != nil {
-		logrusLogger.Fatalln("Failed to dial server:", err)
-	}
-	logrusLogger.Warnln("Connected to profile")
-
+	/*
+		logrusLogger.Warnln("dialing profile")
+		pConn, err := profileConn(app)
+		if err != nil {
+			logrusLogger.Fatalln("Failed to dial server:", err)
+		}
+		logrusLogger.Warnln("Connected to profile")
+	*/
 	gwmux := runtime.NewServeMux(runtime.WithMetadata(func(ctx context.Context, r *http.Request) metadata.MD {
 		md := make(map[string]string)
 		if method, ok := runtime.RPCMethod(ctx); ok {
