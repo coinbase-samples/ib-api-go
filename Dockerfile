@@ -19,6 +19,7 @@ FROM scratch
 COPY --from=builder /build/main /main
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 
+COPY --from=builder /build/ca-cert.pem /ca-cert.pem
 COPY --from=builder /build/server.crt /server.crt
 COPY --from=builder /build/server.key /server.key
 

@@ -31,7 +31,9 @@ func testOrderDial(app config.AppConfig) {
 	dialOrderConn := getOrderConnAddress(app)
 	grpc.EnableTracing = true
 
-	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	clientCreds, _ := loadTLSCredentials()
+
+	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(clientCreds)) //insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -58,6 +60,8 @@ func testOrderDial(app config.AppConfig) {
 func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	dialOrderConn := getOrderConnAddress(app)
 
+	clientCreds, _ := loadTLSCredentials()
+
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	logrusLogger.Warnln("order dial", dialOrderConn, md)
@@ -68,13 +72,13 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 		ctx,
 		dialOrderConn,
 		//grpc.WithBlock(),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithTransportCredentials(clientCreds), //insecure.NewCredentials()),
 	)
 	return conn, err
 }
 
 func testProfileDial(app config.AppConfig) {
-	dialProfileConn := fmt.Sprintf("localhost:%s", app.Port) //app.GrpcPort)
+	dialProfileConn := fmt.Sprintf("0.0.0.0:%s", app.Port) //app.GrpcPort)
 	grpc.EnableTracing = true
 
 	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -199,17 +203,19 @@ func setupHttp(app config.AppConfig, grpcServer *grpc.Server) (*http.Server, err
 	logrusLogger.Warnf("started gRPC-Gateway on - %v", app.Port)
 
 	go func() {
-		if app.Env == "local" {
-			if err := gwServer.ListenAndServe(); err != nil {
-				logrusLogger.Fatalln("ListenAndServe: ", err)
-			}
-			logrusLogger.Warnf("started http")
-		} else {
-			if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
-				logrusLogger.Fatalln("ListenAndServeTLS: ", err)
-			}
-			logrusLogger.Warnf("started https")
+		/*
+			if app.Env == "local" {
+				if err := gwServer.ListenAndServe(); err != nil {
+					logrusLogger.Fatalln("ListenAndServe: ", err)
+				}
+				logrusLogger.Warnf("started http")
+			} else {
+		*/
+		if err := gwServer.ListenAndServeTLS("server.crt", "server.key"); err != nil {
+			logrusLogger.Fatalln("ListenAndServeTLS: ", err)
 		}
+		logrusLogger.Warnf("started https")
+		//}
 	}()
 
 	return gwServer, nil
