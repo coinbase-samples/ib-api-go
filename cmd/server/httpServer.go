@@ -57,14 +57,14 @@ func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 }
 
 func setupHttp(app config.AppConfig) (*http.Server, error) {
-	logrusLogger.Debugln("dialing order manager")
+	logrusLogger.Warnln("dialing order manager")
 	oConn, err := orderConn(app)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to dial server:", err)
 	}
-	logrusLogger.Debugln("Connected to order manager")
+	logrusLogger.Warnln("Connected to order manager")
 
-	logrusLogger.Debugln("dialing profile")
+	logrusLogger.Warnln("dialing profile")
 	pConn, err := profileConn(app)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to dial server:", err)
