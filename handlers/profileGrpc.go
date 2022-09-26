@@ -29,7 +29,7 @@ func (o *ProfileServer) ReadProfile(ctx context.Context, req *profile.ReadProfil
 		trace.WithAttributes(attribute.String("UserId", authedUser.Id)))
 	defer span.End()
 
-	l.Debugln("fetching user", authedUser.Id, req.Id)
+	l.Warnf("fetching user - %s - %s", authedUser.Id, req.Id)
 	body, err := dba.Repo.ReadProfile(authedUser.Id)
 
 	if err != nil {
