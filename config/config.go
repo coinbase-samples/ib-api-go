@@ -39,6 +39,7 @@ func Setup(app *AppConfig) {
 	viper.SetDefault("DB_ENDPOINT", "http://localhost:4566")
 	viper.SetDefault("PROFILE_TABLE", "Profile")
 	viper.SetDefault("BALANCE_TABLE", "Balance")
+	viper.SetDefault("ORDER_MGR_ROUTE_ID", "ordermgr")
 
 	err := viper.ReadInConfig()
 	if err != nil {
