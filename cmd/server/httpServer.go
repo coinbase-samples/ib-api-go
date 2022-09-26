@@ -11,6 +11,8 @@ import (
 	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
 	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -117,7 +119,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 
 	logrusLogger.Warnf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
-		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
+		Handler:      h2c.NewHandler(handlers.CORS(originsOk, headersOk, methodsOk)(gwmux), &http2.Server{}),
 		Addr:         fmt.Sprintf(":%s", app.Port),
 		WriteTimeout: 40 * time.Second,
 		ReadTimeout:  40 * time.Second,
