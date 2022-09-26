@@ -123,6 +123,9 @@ func gRPCListen(app config.AppConfig, aw authMiddleware) {
 
 	}()
 
+	testOrderDial(app)
+	testProfileDial(app)
+
 	gwServer, err := setupHttp(app)
 	if err != nil {
 		logrusLogger.Warnln("issues setting up http server", err)

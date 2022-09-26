@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -18,13 +19,39 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
-	var dialOrderConn string
+func getOrderConnAddress(app config.AppConfig) string {
 	if app.Env == "local" {
-		dialOrderConn = fmt.Sprintf("%s:%s", app.NetworkName, app.OrderGrpcPort)
-	} else {
-		dialOrderConn = fmt.Sprintf("%s:443", app.NetworkName)
+		return fmt.Sprintf("%s:%s", app.NetworkName, app.OrderGrpcPort)
 	}
+	return fmt.Sprintf("%s:443", app.NetworkName)
+}
+
+func testOrderDial(app config.AppConfig) {
+	dialOrderConn := getOrderConnAddress(app)
+
+	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := v1.NewAssetServiceClient(conn)
+
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	defer cancel()
+	logrusLogger.Warnf("sending order test %s - %v - %v", dialOrderConn, ctx, md)
+	r, err := c.ListAssets(ctx, &v1.ListAssetsRequest{})
+	if err != nil {
+		logrusLogger.Warnf("could not greet order: %v", err)
+		return
+	}
+	logrusLogger.Warnf("Greeting: %s", r.Data)
+}
+
+func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
+	dialOrderConn := getOrderConnAddress(app)
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
@@ -39,6 +66,27 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	return conn, err
+}
+
+func testProfileDial(app config.AppConfig) {
+	dialProfileConn := fmt.Sprintf("localhost:%s", app.GrpcPort)
+
+	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := v1.NewProfileServiceClient(conn)
+
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.ReadProfile(ctx, &v1.ReadProfileRequest{Id: "c5af3271-7185-4a52-9d0c-1c4b418317d8"})
+	if err != nil {
+		logrusLogger.Warnf("could not greet profile: %v", err)
+		return
+	}
+	logrusLogger.Warnf("Greeting: %s", r.UserName)
 }
 
 func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
