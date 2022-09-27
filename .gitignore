@@ -3,3 +3,5 @@
 .DS_Store
 server.key
 server.crt
+*.swp
+authClient
