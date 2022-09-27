@@ -21,6 +21,10 @@ type AppConfig struct {
 	BalanceTableName string `mapstructure:"BALANCE_TABLE"`
 }
 
+func (a AppConfig) IsLocalEnv() bool {
+	return a.Env == "local"
+}
+
 func Setup(app *AppConfig) {
 	viper.AddConfigPath(".")
 	viper.SetConfigName(".env")

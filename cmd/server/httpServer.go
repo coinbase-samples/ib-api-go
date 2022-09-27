@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -20,14 +21,14 @@ import (
 )
 
 func getOrderConnAddress(app config.AppConfig) string {
-	if app.Env == "local" {
+	if app.IsLocalEnv() {
 		return fmt.Sprintf("%s:%s", app.NetworkName, app.OrderGrpcPort)
 	}
 	return fmt.Sprintf("%s:443", app.NetworkName)
 }
 
 func getProfileConnAddress(app config.AppConfig) string {
-	if app.Env == "local" {
+	if app.IsLocalEnv() {
 		return fmt.Sprintf("%s:%s", "0.0.0.0", app.GrpcPort)
 	}
 	return fmt.Sprintf("%s:%s", "api-internal-dev.neoworks.xyz", app.GrpcPort)
@@ -67,12 +68,20 @@ func testOrderDial(app config.AppConfig) {
 }
 
 func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
+
 	dialOrderConn := getOrderConnAddress(app)
-	var clientCreds credentials.TransportCredentials
-	if app.Env != "local" {
-		clientCreds, _ = loadTLSCredentials()
+
+	var opts []grpc.DialOption
+	if app.IsLocalEnv() {
+		opts = append(opts, grpc.WithTransportCredentials(
+			insecure.NewCredentials(),
+		))
 	} else {
-		clientCreds = insecure.NewCredentials()
+		opts = append(opts, grpc.WithTransportCredentials(
+			credentials.NewTLS(&tls.Config{
+				InsecureSkipVerify: true,
+			}),
+		))
 	}
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
@@ -84,8 +93,7 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	conn, err := grpc.DialContext(
 		ctx,
 		dialOrderConn,
-		//grpc.WithBlock(),
-		grpc.WithTransportCredentials(clientCreds), //insecure.NewCredentials()),
+		opts...,
 	)
 	return conn, err
 }
