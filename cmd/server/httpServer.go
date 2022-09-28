@@ -71,7 +71,7 @@ func testOrderDial(app config.AppConfig) {
 		logrusLogger.Warnf("could not greet order: %v", err)
 		return
 	}
-	logrusLogger.Warnf("Greeting: %s", r.Data)
+	logrusLogger.Warnf("Greeting Order: %s", r.Data)
 }
 
 func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
@@ -80,7 +80,7 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	logrusLogger.Warnln("order dial", dialOrderConn, md)
+	logrusLogger.Debugln("order dial", dialOrderConn, md)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 
@@ -121,13 +121,13 @@ func testProfileDial(app config.AppConfig) {
 		logrusLogger.Warnf("could not greet profile: %v", err)
 		return
 	}
-	logrusLogger.Warnf("Greeting: %s", r.UserName)
+	logrusLogger.Warnf("Greeting Profile: %s", r.UserName)
 }
 
 func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 	dialProfileConn := getProfileConnAddress(app)
 	dialCreds := getGrpcCredentials(app)
-	logrusLogger.Warnln("connecting to profile localhost grpc", dialProfileConn)
+	logrusLogger.Debugln("connecting to profile localhost grpc", dialProfileConn)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
@@ -139,19 +139,19 @@ func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 }
 
 func setupHttp(app config.AppConfig) (*http.Server, error) {
-	logrusLogger.Warnln("dialing order manager")
+	logrusLogger.Debugln("dialing order manager")
 	oConn, err := orderConn(app)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to dial server:", err)
 	}
-	logrusLogger.Warnln("Connected to order manager")
+	logrusLogger.Debugln("Connected to order manager")
 
-	logrusLogger.Warnln("dialing profile")
+	logrusLogger.Debugln("dialing profile")
 	pConn, err := profileConn(app)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to dial server:", err)
 	}
-	logrusLogger.Warnln("Connected to profile")
+	logrusLogger.Debugln("Connected to profile")
 
 	gwmux := runtime.NewServeMux(runtime.WithMetadata(func(ctx context.Context, r *http.Request) metadata.MD {
 		md := make(map[string]string)
@@ -164,10 +164,16 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 
 		if strings.HasPrefix(r.URL.String(), "/v1/profile") {
 			md["x-route-id"] = app.UserRouteId
-			logrusLogger.Warnln("adding profile route id", app.UserRouteId)
+			logrusLogger.Warnln("/v1/profile adding profile route id", app.UserRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/order") {
 			md["x-route-id"] = app.OrderRouteId
-			logrusLogger.Warnln("adding order route id", app.OrderRouteId)
+			logrusLogger.Warnln("/v1/order adding order route id", app.OrderRouteId)
+		} else if strings.HasPrefix(r.URL.String(), "/v1/balances") {
+			md["x-route-id"] = app.OrderRouteId
+			logrusLogger.Warnln("/v1/balances adding order route id", app.OrderRouteId)
+		} else if strings.HasPrefix(r.URL.String(), "/v1/assets") {
+			md["x-route-id"] = app.OrderRouteId
+			logrusLogger.Warnln("/v1/assets adding order route id", app.OrderRouteId)
 		}
 
 		return metadata.New(md)
@@ -218,7 +224,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	logrusLogger.Warnf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
+	logrusLogger.Debugf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
 		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
 		Addr:         fmt.Sprintf(":%s", app.Port),
