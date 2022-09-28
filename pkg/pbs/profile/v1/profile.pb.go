@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        (unknown)
-// source: pkg/pbs/v1/profile.proto
+// source: pkg/pbs/profile/v1/profile.proto
 
 package v1
 
@@ -34,7 +34,7 @@ type ReadProfileRequest struct {
 func (x *ReadProfileRequest) Reset() {
 	*x = ReadProfileRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pbs_v1_profile_proto_msgTypes[0]
+		mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -47,7 +47,7 @@ func (x *ReadProfileRequest) String() string {
 func (*ReadProfileRequest) ProtoMessage() {}
 
 func (x *ReadProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pbs_v1_profile_proto_msgTypes[0]
+	mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,7 +60,7 @@ func (x *ReadProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadProfileRequest.ProtoReflect.Descriptor instead.
 func (*ReadProfileRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_pbs_v1_profile_proto_rawDescGZIP(), []int{0}
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ReadProfileRequest) GetId() string {
@@ -90,7 +90,7 @@ type ReadProfileResponse struct {
 func (x *ReadProfileResponse) Reset() {
 	*x = ReadProfileResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pbs_v1_profile_proto_msgTypes[1]
+		mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -103,7 +103,7 @@ func (x *ReadProfileResponse) String() string {
 func (*ReadProfileResponse) ProtoMessage() {}
 
 func (x *ReadProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pbs_v1_profile_proto_msgTypes[1]
+	mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -116,7 +116,7 @@ func (x *ReadProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReadProfileResponse.ProtoReflect.Descriptor instead.
 func (*ReadProfileResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_pbs_v1_profile_proto_rawDescGZIP(), []int{1}
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ReadProfileResponse) GetUserId() string {
@@ -206,7 +206,7 @@ type UpdateProfileRequest struct {
 func (x *UpdateProfileRequest) Reset() {
 	*x = UpdateProfileRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pbs_v1_profile_proto_msgTypes[2]
+		mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -219,7 +219,7 @@ func (x *UpdateProfileRequest) String() string {
 func (*UpdateProfileRequest) ProtoMessage() {}
 
 func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pbs_v1_profile_proto_msgTypes[2]
+	mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -232,7 +232,7 @@ func (x *UpdateProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileRequest.ProtoReflect.Descriptor instead.
 func (*UpdateProfileRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_pbs_v1_profile_proto_rawDescGZIP(), []int{2}
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *UpdateProfileRequest) GetId() string {
@@ -304,7 +304,7 @@ type UpdateProfileResponse struct {
 func (x *UpdateProfileResponse) Reset() {
 	*x = UpdateProfileResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pbs_v1_profile_proto_msgTypes[3]
+		mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -317,7 +317,7 @@ func (x *UpdateProfileResponse) String() string {
 func (*UpdateProfileResponse) ProtoMessage() {}
 
 func (x *UpdateProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pbs_v1_profile_proto_msgTypes[3]
+	mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -330,7 +330,7 @@ func (x *UpdateProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProfileResponse.ProtoReflect.Descriptor instead.
 func (*UpdateProfileResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_pbs_v1_profile_proto_rawDescGZIP(), []int{3}
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UpdateProfileResponse) GetUserId() string {
@@ -420,7 +420,7 @@ type CreateProfileRequest struct {
 func (x *CreateProfileRequest) Reset() {
 	*x = CreateProfileRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pbs_v1_profile_proto_msgTypes[4]
+		mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -433,7 +433,7 @@ func (x *CreateProfileRequest) String() string {
 func (*CreateProfileRequest) ProtoMessage() {}
 
 func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pbs_v1_profile_proto_msgTypes[4]
+	mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -446,7 +446,7 @@ func (x *CreateProfileRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProfileRequest.ProtoReflect.Descriptor instead.
 func (*CreateProfileRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_pbs_v1_profile_proto_rawDescGZIP(), []int{4}
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateProfileRequest) GetId() string {
@@ -518,7 +518,7 @@ type CreateProfileResponse struct {
 func (x *CreateProfileResponse) Reset() {
 	*x = CreateProfileResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_pbs_v1_profile_proto_msgTypes[5]
+		mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -531,7 +531,7 @@ func (x *CreateProfileResponse) String() string {
 func (*CreateProfileResponse) ProtoMessage() {}
 
 func (x *CreateProfileResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_pbs_v1_profile_proto_msgTypes[5]
+	mi := &file_pkg_pbs_profile_v1_profile_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -544,7 +544,7 @@ func (x *CreateProfileResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProfileResponse.ProtoReflect.Descriptor instead.
 func (*CreateProfileResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_pbs_v1_profile_proto_rawDescGZIP(), []int{5}
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateProfileResponse) GetUserId() string {
@@ -617,12 +617,13 @@ func (x *CreateProfileResponse) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-var File_pkg_pbs_v1_profile_proto protoreflect.FileDescriptor
+var File_pkg_pbs_profile_v1_profile_proto protoreflect.FileDescriptor
 
-var file_pkg_pbs_v1_profile_proto_rawDesc = []byte{
-	0x0a, 0x18, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62, 0x73, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f,
-	0x66, 0x69, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0a, 0x70, 0x6b, 0x67, 0x2e,
-	0x70, 0x62, 0x73, 0x2e, 0x76, 0x31, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x61,
+var file_pkg_pbs_profile_v1_profile_proto_rawDesc = []byte{
+	0x0a, 0x20, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c,
+	0x65, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x12, 0x12, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x66,
+	0x69, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x61,
 	0x70, 0x69, 0x2f, 0x61, 0x6e, 0x6e, 0x6f, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e,
@@ -732,70 +733,74 @@ var file_pkg_pbs_v1_profile_proto_rawDesc = []byte{
 	0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
 	0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x32, 0xe0, 0x02, 0x0a, 0x0e, 0x50, 0x72, 0x6f, 0x66,
-	0x69, 0x6c, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x68, 0x0a, 0x0b, 0x52, 0x65,
-	0x61, 0x64, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x1e, 0x2e, 0x70, 0x6b, 0x67, 0x2e,
-	0x70, 0x62, 0x73, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x50, 0x72, 0x6f, 0x66, 0x69,
-	0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1f, 0x2e, 0x70, 0x6b, 0x67, 0x2e,
-	0x70, 0x62, 0x73, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x50, 0x72, 0x6f, 0x66, 0x69,
+	0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x32, 0x92, 0x03, 0x0a, 0x0e, 0x50, 0x72, 0x6f, 0x66,
+	0x69, 0x6c, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x78, 0x0a, 0x0b, 0x52, 0x65,
+	0x61, 0x64, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x26, 0x2e, 0x70, 0x6b, 0x67, 0x2e,
+	0x70, 0x62, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52,
+	0x65, 0x61, 0x64, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x27, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x66,
+	0x69, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x50, 0x72, 0x6f, 0x66, 0x69,
 	0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x18, 0x82, 0xd3, 0xe4, 0x93,
 	0x02, 0x12, 0x12, 0x10, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2f,
-	0x7b, 0x69, 0x64, 0x7d, 0x12, 0x71, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72,
-	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x20, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62, 0x73, 0x2e,
-	0x76, 0x31, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62,
-	0x73, 0x2e, 0x76, 0x31, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69,
-	0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1b, 0x82, 0xd3, 0xe4, 0x93,
-	0x02, 0x15, 0x1a, 0x10, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2f,
-	0x7b, 0x69, 0x64, 0x7d, 0x3a, 0x01, 0x2a, 0x12, 0x71, 0x0a, 0x0d, 0x43, 0x72, 0x65, 0x61, 0x74,
-	0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x20, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70,
-	0x62, 0x73, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66,
-	0x69, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x70, 0x6b, 0x67,
-	0x2e, 0x70, 0x62, 0x73, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x72,
-	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1b, 0x82,
-	0xd3, 0xe4, 0x93, 0x02, 0x15, 0x22, 0x10, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69,
-	0x6c, 0x65, 0x2f, 0x7b, 0x69, 0x64, 0x7d, 0x3a, 0x01, 0x2a, 0x42, 0x37, 0x5a, 0x35, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x69, 0x6e, 0x62, 0x61, 0x73,
-	0x65, 0x2d, 0x73, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x73, 0x2f, 0x69, 0x62, 0x2d, 0x6f, 0x72, 0x64,
-	0x65, 0x72, 0x6d, 0x67, 0x72, 0x2d, 0x67, 0x6f, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62, 0x73,
-	0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x7b, 0x69, 0x64, 0x7d, 0x12, 0x81, 0x01, 0x0a, 0x0d, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50,
+	0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x28, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62, 0x73,
+	0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x29, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69,
+	0x6c, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66,
+	0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x1b, 0x82, 0xd3, 0xe4,
+	0x93, 0x02, 0x15, 0x1a, 0x10, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
+	0x2f, 0x7b, 0x69, 0x64, 0x7d, 0x3a, 0x01, 0x2a, 0x12, 0x81, 0x01, 0x0a, 0x0d, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x28, 0x2e, 0x70, 0x6b, 0x67,
+	0x2e, 0x70, 0x62, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x2e,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x29, 0x2e, 0x70, 0x6b, 0x67, 0x2e, 0x70, 0x62, 0x73, 0x2e, 0x70,
+	0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x1b, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x15, 0x22, 0x10, 0x2f, 0x76, 0x31, 0x2f, 0x70, 0x72, 0x6f,
+	0x66, 0x69, 0x6c, 0x65, 0x2f, 0x7b, 0x69, 0x64, 0x7d, 0x3a, 0x01, 0x2a, 0x42, 0x3e, 0x5a, 0x3c,
+	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x63, 0x6f, 0x69, 0x6e, 0x62,
+	0x61, 0x73, 0x65, 0x2d, 0x73, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x73, 0x2f, 0x69, 0x62, 0x2d, 0x75,
+	0x73, 0x65, 0x72, 0x6d, 0x67, 0x72, 0x2d, 0x67, 0x6f, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x62,
+	0x73, 0x2f, 0x70, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x2f, 0x76, 0x31, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
-	file_pkg_pbs_v1_profile_proto_rawDescOnce sync.Once
-	file_pkg_pbs_v1_profile_proto_rawDescData = file_pkg_pbs_v1_profile_proto_rawDesc
+	file_pkg_pbs_profile_v1_profile_proto_rawDescOnce sync.Once
+	file_pkg_pbs_profile_v1_profile_proto_rawDescData = file_pkg_pbs_profile_v1_profile_proto_rawDesc
 )
 
-func file_pkg_pbs_v1_profile_proto_rawDescGZIP() []byte {
-	file_pkg_pbs_v1_profile_proto_rawDescOnce.Do(func() {
-		file_pkg_pbs_v1_profile_proto_rawDescData = protoimpl.X.CompressGZIP(file_pkg_pbs_v1_profile_proto_rawDescData)
+func file_pkg_pbs_profile_v1_profile_proto_rawDescGZIP() []byte {
+	file_pkg_pbs_profile_v1_profile_proto_rawDescOnce.Do(func() {
+		file_pkg_pbs_profile_v1_profile_proto_rawDescData = protoimpl.X.CompressGZIP(file_pkg_pbs_profile_v1_profile_proto_rawDescData)
 	})
-	return file_pkg_pbs_v1_profile_proto_rawDescData
+	return file_pkg_pbs_profile_v1_profile_proto_rawDescData
 }
 
-var file_pkg_pbs_v1_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_pkg_pbs_v1_profile_proto_goTypes = []interface{}{
-	(*ReadProfileRequest)(nil),    // 0: pkg.pbs.v1.ReadProfileRequest
-	(*ReadProfileResponse)(nil),   // 1: pkg.pbs.v1.ReadProfileResponse
-	(*UpdateProfileRequest)(nil),  // 2: pkg.pbs.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil), // 3: pkg.pbs.v1.UpdateProfileResponse
-	(*CreateProfileRequest)(nil),  // 4: pkg.pbs.v1.CreateProfileRequest
-	(*CreateProfileResponse)(nil), // 5: pkg.pbs.v1.CreateProfileResponse
+var file_pkg_pbs_profile_v1_profile_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_pkg_pbs_profile_v1_profile_proto_goTypes = []interface{}{
+	(*ReadProfileRequest)(nil),    // 0: pkg.pbs.profile.v1.ReadProfileRequest
+	(*ReadProfileResponse)(nil),   // 1: pkg.pbs.profile.v1.ReadProfileResponse
+	(*UpdateProfileRequest)(nil),  // 2: pkg.pbs.profile.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil), // 3: pkg.pbs.profile.v1.UpdateProfileResponse
+	(*CreateProfileRequest)(nil),  // 4: pkg.pbs.profile.v1.CreateProfileRequest
+	(*CreateProfileResponse)(nil), // 5: pkg.pbs.profile.v1.CreateProfileResponse
 	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
 }
-var file_pkg_pbs_v1_profile_proto_depIdxs = []int32{
-	6, // 0: pkg.pbs.v1.ReadProfileResponse.created_at:type_name -> google.protobuf.Timestamp
-	6, // 1: pkg.pbs.v1.ReadProfileResponse.updated_at:type_name -> google.protobuf.Timestamp
-	6, // 2: pkg.pbs.v1.UpdateProfileResponse.created_at:type_name -> google.protobuf.Timestamp
-	6, // 3: pkg.pbs.v1.UpdateProfileResponse.updated_at:type_name -> google.protobuf.Timestamp
-	6, // 4: pkg.pbs.v1.CreateProfileResponse.created_at:type_name -> google.protobuf.Timestamp
-	6, // 5: pkg.pbs.v1.CreateProfileResponse.updated_at:type_name -> google.protobuf.Timestamp
-	0, // 6: pkg.pbs.v1.ProfileService.ReadProfile:input_type -> pkg.pbs.v1.ReadProfileRequest
-	2, // 7: pkg.pbs.v1.ProfileService.UpdateProfile:input_type -> pkg.pbs.v1.UpdateProfileRequest
-	4, // 8: pkg.pbs.v1.ProfileService.CreateProfile:input_type -> pkg.pbs.v1.CreateProfileRequest
-	1, // 9: pkg.pbs.v1.ProfileService.ReadProfile:output_type -> pkg.pbs.v1.ReadProfileResponse
-	3, // 10: pkg.pbs.v1.ProfileService.UpdateProfile:output_type -> pkg.pbs.v1.UpdateProfileResponse
-	5, // 11: pkg.pbs.v1.ProfileService.CreateProfile:output_type -> pkg.pbs.v1.CreateProfileResponse
+var file_pkg_pbs_profile_v1_profile_proto_depIdxs = []int32{
+	6, // 0: pkg.pbs.profile.v1.ReadProfileResponse.created_at:type_name -> google.protobuf.Timestamp
+	6, // 1: pkg.pbs.profile.v1.ReadProfileResponse.updated_at:type_name -> google.protobuf.Timestamp
+	6, // 2: pkg.pbs.profile.v1.UpdateProfileResponse.created_at:type_name -> google.protobuf.Timestamp
+	6, // 3: pkg.pbs.profile.v1.UpdateProfileResponse.updated_at:type_name -> google.protobuf.Timestamp
+	6, // 4: pkg.pbs.profile.v1.CreateProfileResponse.created_at:type_name -> google.protobuf.Timestamp
+	6, // 5: pkg.pbs.profile.v1.CreateProfileResponse.updated_at:type_name -> google.protobuf.Timestamp
+	0, // 6: pkg.pbs.profile.v1.ProfileService.ReadProfile:input_type -> pkg.pbs.profile.v1.ReadProfileRequest
+	2, // 7: pkg.pbs.profile.v1.ProfileService.UpdateProfile:input_type -> pkg.pbs.profile.v1.UpdateProfileRequest
+	4, // 8: pkg.pbs.profile.v1.ProfileService.CreateProfile:input_type -> pkg.pbs.profile.v1.CreateProfileRequest
+	1, // 9: pkg.pbs.profile.v1.ProfileService.ReadProfile:output_type -> pkg.pbs.profile.v1.ReadProfileResponse
+	3, // 10: pkg.pbs.profile.v1.ProfileService.UpdateProfile:output_type -> pkg.pbs.profile.v1.UpdateProfileResponse
+	5, // 11: pkg.pbs.profile.v1.ProfileService.CreateProfile:output_type -> pkg.pbs.profile.v1.CreateProfileResponse
 	9, // [9:12] is the sub-list for method output_type
 	6, // [6:9] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -803,13 +808,13 @@ var file_pkg_pbs_v1_profile_proto_depIdxs = []int32{
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_pkg_pbs_v1_profile_proto_init() }
-func file_pkg_pbs_v1_profile_proto_init() {
-	if File_pkg_pbs_v1_profile_proto != nil {
+func init() { file_pkg_pbs_profile_v1_profile_proto_init() }
+func file_pkg_pbs_profile_v1_profile_proto_init() {
+	if File_pkg_pbs_profile_v1_profile_proto != nil {
 		return
 	}
 	if !protoimpl.UnsafeEnabled {
-		file_pkg_pbs_v1_profile_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+		file_pkg_pbs_profile_v1_profile_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ReadProfileRequest); i {
 			case 0:
 				return &v.state
@@ -821,7 +826,7 @@ func file_pkg_pbs_v1_profile_proto_init() {
 				return nil
 			}
 		}
-		file_pkg_pbs_v1_profile_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+		file_pkg_pbs_profile_v1_profile_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ReadProfileResponse); i {
 			case 0:
 				return &v.state
@@ -833,7 +838,7 @@ func file_pkg_pbs_v1_profile_proto_init() {
 				return nil
 			}
 		}
-		file_pkg_pbs_v1_profile_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+		file_pkg_pbs_profile_v1_profile_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateProfileRequest); i {
 			case 0:
 				return &v.state
@@ -845,7 +850,7 @@ func file_pkg_pbs_v1_profile_proto_init() {
 				return nil
 			}
 		}
-		file_pkg_pbs_v1_profile_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+		file_pkg_pbs_profile_v1_profile_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UpdateProfileResponse); i {
 			case 0:
 				return &v.state
@@ -857,7 +862,7 @@ func file_pkg_pbs_v1_profile_proto_init() {
 				return nil
 			}
 		}
-		file_pkg_pbs_v1_profile_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_pkg_pbs_profile_v1_profile_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateProfileRequest); i {
 			case 0:
 				return &v.state
@@ -869,7 +874,7 @@ func file_pkg_pbs_v1_profile_proto_init() {
 				return nil
 			}
 		}
-		file_pkg_pbs_v1_profile_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+		file_pkg_pbs_profile_v1_profile_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CreateProfileResponse); i {
 			case 0:
 				return &v.state
@@ -886,18 +891,18 @@ func file_pkg_pbs_v1_profile_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_pkg_pbs_v1_profile_proto_rawDesc,
+			RawDescriptor: file_pkg_pbs_profile_v1_profile_proto_rawDesc,
 			NumEnums:      0,
 			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_pkg_pbs_v1_profile_proto_goTypes,
-		DependencyIndexes: file_pkg_pbs_v1_profile_proto_depIdxs,
-		MessageInfos:      file_pkg_pbs_v1_profile_proto_msgTypes,
+		GoTypes:           file_pkg_pbs_profile_v1_profile_proto_goTypes,
+		DependencyIndexes: file_pkg_pbs_profile_v1_profile_proto_depIdxs,
+		MessageInfos:      file_pkg_pbs_profile_v1_profile_proto_msgTypes,
 	}.Build()
-	File_pkg_pbs_v1_profile_proto = out.File
-	file_pkg_pbs_v1_profile_proto_rawDesc = nil
-	file_pkg_pbs_v1_profile_proto_goTypes = nil
-	file_pkg_pbs_v1_profile_proto_depIdxs = nil
+	File_pkg_pbs_profile_v1_profile_proto = out.File
+	file_pkg_pbs_profile_v1_profile_proto_rawDesc = nil
+	file_pkg_pbs_profile_v1_profile_proto_goTypes = nil
+	file_pkg_pbs_profile_v1_profile_proto_depIdxs = nil
 }

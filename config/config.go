@@ -7,17 +7,22 @@ import (
 )
 
 type AppConfig struct {
-	Port             string `mapstructure:"PORT"`
-	ClientId         string `mapstructure:"COGNITO_APP_CLIENT_ID"`
-	UserPoolId       string `mapstructure:"COGNITO_USER_POOL_ID"`
-	GrpcPort         string `mapstructure:"GRPC_PORT"`
+	Env        string `mapstructure:"ENV_NAME"`
+	LogLevel   string `mapstructure:"LOG_LEVEL"`
+	Port       string `mapstructure:"PORT"`
+	ClientId   string `mapstructure:"COGNITO_APP_CLIENT_ID"`
+	UserPoolId string `mapstructure:"COGNITO_USER_POOL_ID"`
+	GrpcPort   string `mapstructure:"GRPC_PORT"`
+
 	OrderGrpcPort    string `mapstructure:"ORDER_GRPC_PORT"`
 	OrderRouteId     string `mapstructure:"ORDER_MGR_ROUTE_ID"`
-	Env              string `mapstructure:"ENV_NAME"`
-	LogLevel         string `mapstructure:"LOG_LEVEL"`
-	NetworkName      string `mapstructure:"ORDER_MGR_HOSTNAME"`
+	OrderMgrHostname string `mapstructure:"ORDER_MGR_HOSTNAME"`
+
+	UserGrpcPort    string `mapstructure:"USER_GRPC_PORT"`
+	UserMgrHostname string `mapstructure:"USER_MGR_HOSTNAME"`
+	UserRouteId     string `mapstructure:"USER_MGR_ROUTE_ID"`
+
 	DatabaseEndpoint string `mapstructure:"DB_ENDPOINT"`
-	ProfileTableName string `mapstructure:"PROFILE_TABLE"`
 	BalanceTableName string `mapstructure:"BALANCE_TABLE"`
 }
 
@@ -34,16 +39,20 @@ func Setup(app *AppConfig) {
 
 	viper.AllowEmptyEnv(true)
 	// set defaults
+	viper.SetDefault("ENV_NAME", "local")
 	viper.SetDefault("LOG_LEVEL", "warning")
 	viper.SetDefault("PORT", "8443")
 	viper.SetDefault("GRPC_PORT", "8449")
 	viper.SetDefault("ORDER_GRPC_PORT", "8444")
-	viper.SetDefault("ENV_NAME", "local")
+	viper.SetDefault("USER_GRPC_PORT", "8451")
+
 	viper.SetDefault("ORDER_MGR_HOSTNAME", "localhost")
-	viper.SetDefault("DB_ENDPOINT", "http://localhost:4566")
-	viper.SetDefault("PROFILE_TABLE", "Profile")
-	viper.SetDefault("BALANCE_TABLE", "Balance")
+	viper.SetDefault("USER_MGR_HOSTNAME", "localhost")
 	viper.SetDefault("ORDER_MGR_ROUTE_ID", "ordermgr")
+	viper.SetDefault("USER_MGR_ROUTE_ID", "usermgr")
+
+	viper.SetDefault("DB_ENDPOINT", "http://localhost:4566")
+	viper.SetDefault("BALANCE_TABLE", "Balance")
 
 	err := viper.ReadInConfig()
 	if err != nil {

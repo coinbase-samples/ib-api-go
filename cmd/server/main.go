@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/config"
@@ -20,17 +23,33 @@ func main() {
 
 	config.Setup(&app)
 	fmt.Println("starting app with config", app)
-	logLevel, _ := log.ParseLevel("debug") //app.LogLevel)
-	logrusLogger.SetLevel(logLevel)
-	logrusLogger.SetFormatter(&log.JSONFormatter{})
-	//setup cognito client
-	cip := InitAuth(&app)
-	aw := authMiddleware{cip} //setup dynamodb connection
+
+	config.LogInit(app, logrusLogger)
 
 	//setup database
 	repo := dba.NewRepo(&app)
 	dba.NewDBA(repo)
 
-	// Start gRPC Server
-	gRPCListen(app, aw)
+	gwServer, err := setupHttp(app)
+	if err != nil {
+		logrusLogger.Warnln("issues setting up http server", err)
+	}
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
+	defer cancel()
+
+	if gwServer != nil {
+		gwServer.Shutdown(ctx)
+	}
+
+	// Optionally, you could run srv.Shutdown in a goroutine and block on
+	// <-ctx.Done() if your application should wait for other services
+	// to finalize based on context cancellation.
+	logrusLogger.Debugln("stopping")
+	os.Exit(0)
 }

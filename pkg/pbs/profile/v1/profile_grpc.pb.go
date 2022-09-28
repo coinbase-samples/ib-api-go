@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: pkg/pbs/v1/profile.proto
+// source: pkg/pbs/profile/v1/profile.proto
 
 package v1
 
@@ -37,7 +37,7 @@ func NewProfileServiceClient(cc grpc.ClientConnInterface) ProfileServiceClient {
 
 func (c *profileServiceClient) ReadProfile(ctx context.Context, in *ReadProfileRequest, opts ...grpc.CallOption) (*ReadProfileResponse, error) {
 	out := new(ReadProfileResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.ProfileService/ReadProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.profile.v1.ProfileService/ReadProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *profileServiceClient) ReadProfile(ctx context.Context, in *ReadProfileR
 
 func (c *profileServiceClient) UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error) {
 	out := new(UpdateProfileResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.ProfileService/UpdateProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.profile.v1.ProfileService/UpdateProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (c *profileServiceClient) UpdateProfile(ctx context.Context, in *UpdateProf
 
 func (c *profileServiceClient) CreateProfile(ctx context.Context, in *CreateProfileRequest, opts ...grpc.CallOption) (*CreateProfileResponse, error) {
 	out := new(CreateProfileResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.ProfileService/CreateProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.profile.v1.ProfileService/CreateProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func _ProfileService_ReadProfile_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.ProfileService/ReadProfile",
+		FullMethod: "/pkg.pbs.profile.v1.ProfileService/ReadProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProfileServiceServer).ReadProfile(ctx, req.(*ReadProfileRequest))
@@ -126,7 +126,7 @@ func _ProfileService_UpdateProfile_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.ProfileService/UpdateProfile",
+		FullMethod: "/pkg.pbs.profile.v1.ProfileService/UpdateProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProfileServiceServer).UpdateProfile(ctx, req.(*UpdateProfileRequest))
@@ -144,7 +144,7 @@ func _ProfileService_CreateProfile_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.ProfileService/CreateProfile",
+		FullMethod: "/pkg.pbs.profile.v1.ProfileService/CreateProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProfileServiceServer).CreateProfile(ctx, req.(*CreateProfileRequest))
@@ -156,7 +156,7 @@ func _ProfileService_CreateProfile_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProfileService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pkg.pbs.v1.ProfileService",
+	ServiceName: "pkg.pbs.profile.v1.ProfileService",
 	HandlerType: (*ProfileServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -173,5 +173,5 @@ var ProfileService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/pbs/v1/profile.proto",
+	Metadata: "pkg/pbs/profile/v1/profile.proto",
 }
