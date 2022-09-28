@@ -151,6 +151,12 @@ message UpdateOrderFeedRequest {
 
 message UpdateOrderFeedResponse {}
 
+message SendVenueOrderRequest {
+  string order_id = 1 [(validate.rules).string.len = 36];
+}
+
+message SendVenueOrderResponse {}
+
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
     option (google.api.http) = {
@@ -177,6 +183,12 @@ service OrderService {
   rpc UpdateOrderFeed(UpdateOrderFeedRequest) returns (UpdateOrderFeedResponse) {
     option (google.api.http) = {
       post: "/v1/order/{order_id}/status",
+      body: "*"
+    };
+  }
+  rpc SendVenueOrder(SendVenueOrderRequest) returns (SendVenueOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/venue/{order_id}",
       body: "*"
     };
   }

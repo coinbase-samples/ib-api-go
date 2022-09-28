@@ -174,6 +174,8 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		} else if strings.HasPrefix(r.URL.String(), "/v1/assets") {
 			md["x-route-id"] = app.OrderRouteId
 			logrusLogger.Warnln("/v1/assets adding order route id", app.OrderRouteId)
+		} else {
+			logrusLogger.Warnf("%s is an unknown route", r.URL.String())
 		}
 
 		return metadata.New(md)
@@ -187,27 +189,20 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 
 	// Register Service Handlers
 
-	md := metadata.New(map[string]string{"x-route-id": app.UserRouteId})
-	userHandlerContext := metadata.NewOutgoingContext(context.Background(), md)
-	err = profile.RegisterProfileServiceHandler(userHandlerContext, gwmux, pConn)
-	//dopts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	//err = v1.RegisterProfileServiceHandlerFromEndpoint(context.Background(), gwmux, "localhost:8443", dopts)
+	err = profile.RegisterProfileServiceHandler(context.Background(), gwmux, pConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register profile:", err)
 	}
 
-	//add route path
-	omd := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
-	orderHandlerContext := metadata.NewOutgoingContext(context.Background(), omd)
-	err = v1.RegisterOrderServiceHandler(orderHandlerContext, gwmux, oConn)
+	err = v1.RegisterOrderServiceHandler(context.Background(), gwmux, oConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register order:", err)
 	}
-	err = v1.RegisterBalanceServiceHandler(orderHandlerContext, gwmux, oConn)
+	err = v1.RegisterBalanceServiceHandler(context.Background(), gwmux, oConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register balance:", err)
 	}
-	err = v1.RegisterAssetServiceHandler(orderHandlerContext, gwmux, oConn)
+	err = v1.RegisterAssetServiceHandler(context.Background(), gwmux, oConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register asset:", err)
 	}

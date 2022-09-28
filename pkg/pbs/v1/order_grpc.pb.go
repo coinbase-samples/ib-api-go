@@ -27,6 +27,7 @@ type OrderServiceClient interface {
 	ListOrders(ctx context.Context, in *ListOrdersRequest, opts ...grpc.CallOption) (*ListOrdersResponse, error)
 	UpdateOrder(ctx context.Context, in *UpdateOrderRequest, opts ...grpc.CallOption) (*UpdateOrderResponse, error)
 	UpdateOrderFeed(ctx context.Context, in *UpdateOrderFeedRequest, opts ...grpc.CallOption) (*UpdateOrderFeedResponse, error)
+	SendVenueOrder(ctx context.Context, in *SendVenueOrderRequest, opts ...grpc.CallOption) (*SendVenueOrderResponse, error)
 }
 
 type orderServiceClient struct {
@@ -82,6 +83,15 @@ func (c *orderServiceClient) UpdateOrderFeed(ctx context.Context, in *UpdateOrde
 	return out, nil
 }
 
+func (c *orderServiceClient) SendVenueOrder(ctx context.Context, in *SendVenueOrderRequest, opts ...grpc.CallOption) (*SendVenueOrderResponse, error) {
+	out := new(SendVenueOrderResponse)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/SendVenueOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type OrderServiceServer interface {
 	ListOrders(context.Context, *ListOrdersRequest) (*ListOrdersResponse, error)
 	UpdateOrder(context.Context, *UpdateOrderRequest) (*UpdateOrderResponse, error)
 	UpdateOrderFeed(context.Context, *UpdateOrderFeedRequest) (*UpdateOrderFeedResponse, error)
+	SendVenueOrder(context.Context, *SendVenueOrderRequest) (*SendVenueOrderResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedOrderServiceServer) UpdateOrder(context.Context, *UpdateOrder
 }
 func (UnimplementedOrderServiceServer) UpdateOrderFeed(context.Context, *UpdateOrderFeedRequest) (*UpdateOrderFeedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrderFeed not implemented")
+}
+func (UnimplementedOrderServiceServer) SendVenueOrder(context.Context, *SendVenueOrderRequest) (*SendVenueOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendVenueOrder not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 
@@ -216,6 +230,24 @@ func _OrderService_UpdateOrderFeed_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_SendVenueOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendVenueOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).SendVenueOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pkg.pbs.v1.OrderService/SendVenueOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).SendVenueOrder(ctx, req.(*SendVenueOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateOrderFeed",
 			Handler:    _OrderService_UpdateOrderFeed_Handler,
+		},
+		{
+			MethodName: "SendVenueOrder",
+			Handler:    _OrderService_SendVenueOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
