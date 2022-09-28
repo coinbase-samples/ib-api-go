@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/config"
@@ -160,11 +161,20 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		if pattern, ok := runtime.HTTPPathPattern(ctx); ok {
 			md["pattern"] = pattern // /v1/example/login
 		}
+
+		if strings.HasPrefix(r.URL.String(), "/v1/profile") {
+			md["x-route-id"] = app.UserRouteId
+			logrusLogger.Warnln("adding profile route id", app.UserRouteId)
+		} else if strings.HasPrefix(r.URL.String(), "/v1/order") {
+			md["x-route-id"] = app.OrderRouteId
+			logrusLogger.Warnln("adding order route id", app.OrderRouteId)
+		}
+
 		return metadata.New(md)
 	}))
 
 	gwmux.HandlePath("GET", "/health", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-		logrusLogger.Warnln("responding to health check")
+		logrusLogger.Debugln("responding to health check")
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, "ok\n")
 	})
