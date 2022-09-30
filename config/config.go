@@ -23,8 +23,10 @@ type AppConfig struct {
 	UserMgrHostname string `mapstructure:"USER_MGR_HOSTNAME"`
 	UserRouteId     string `mapstructure:"USER_MGR_ROUTE_ID"`
 
-	DatabaseEndpoint string `mapstructure:"DB_ENDPOINT"`
-	BalanceTableName string `mapstructure:"BALANCE_TABLE"`
+	DatabaseEndpoint  string `mapstructure:"DB_ENDPOINT"`
+	BalanceTableName  string `mapstructure:"BALANCE_TABLE"`
+	AssetTableName    string `mapstructure:"ASSET_TABLE"`
+	ActivityTableName string `mapstructure:"ACTIVITY_TABLE"`
 }
 
 func (a AppConfig) IsLocalEnv() bool {
@@ -56,6 +58,8 @@ func Setup(app *AppConfig) {
 
 	viper.SetDefault("DB_ENDPOINT", "http://localhost:4566")
 	viper.SetDefault("BALANCE_TABLE", "Balance")
+	viper.SetDefault("ASSET_TABLE", "Asset")
+	viper.SetDefault("ACTIVITY_TABLE", "Activity")
 
 	err := viper.ReadInConfig()
 	if err != nil {

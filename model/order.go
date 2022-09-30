@@ -14,19 +14,20 @@ type OrderRequest struct {
 type Order struct {
 	OrderId            string           `json:"clientOrderId" dynamodbav:"orderId"`
 	OwnerId            string           `json:"ownerId" dynamodbav:"userId"`
-	VenueOrderId       string           `json:"venueOrderId" dynamodbav:",omitempty"`
-	ProductId          string           `json:"productId"`
-	Side               OrderSide        `json:"side"`
-	Type               OrderType        `json:"type"`
-	Quantity           float32          `json:"quantity"`
-	LimitPrice         float32          `json:"limitPrice" dynamodbav:",omitempty"`
-	TimeInForce        OrderTimeInForce `json:"timeInForce" dynamodbav:",omitempty"`
-	Status             OrderStatus      `json:"status"`
-	CreatedAt          time.Time        `json:"createdAt"`
-	UpdatedAt          time.Time        `json:"updatedAt"`
-	FilledQuantity     float32          `json:"filledQuantity"`
-	FilledValue        float32          `json:"filledValue"`
-	AverageFilledPrice float32          `json:"averageFilledPrice"`
-	Commission         float32          `json:"commission"`
-	ExchangeFee        float32          `json:"exchangeFee" dynamodbav:",omitempty"`
+	Filter             string           `json:"filter" dynamodbav:"filter"`
+	VenueOrderId       string           `json:"venueOrderId" dynamodbav:"venueOrderId,omitempty"`
+	ProductId          string           `json:"productId" dynamodbav:"productId"`
+	Side               OrderSide        `json:"side" dynamodbav:"side"`
+	Type               OrderType        `json:"type" dynamodbav:"type"`
+	Quantity           string           `json:"quantity" dynamodbav:"quantity"`
+	LimitPrice         string           `json:"limitPrice" dynamodbav:"limitPrice,omitempty"`
+	TimeInForce        OrderTimeInForce `json:"timeInForce" dynamodbav:"timeInForce,omitempty"`
+	Status             OrderStatus      `json:"status" dynamodbav:"orderStatus"`
+	CreatedAt          time.Time        `json:"createdAt" dynamodbav:"createdAt"`
+	UpdatedAt          time.Time        `json:"updatedAt" dynamodbav:"updatedAt,omitempty"`
+	FilledQuantity     string           `json:"filledQuantity" dynamodbav:"filledQuantity,omitempty"`
+	FilledValue        string           `json:"filledValue" dynamodbav:"filledValue,omitempty"`
+	AverageFilledPrice string           `json:"averageFilledPrice" dynamodbav:"averageFilledPrice,omitempty"`
+	Commission         string           `json:"commission" dynamodbav:"commission,omitempty"`
+	ExchangeFee        string           `json:"exchangeFee" dynamodbav:"exchangeFee,omitempty"`
 }

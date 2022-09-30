@@ -16,6 +16,7 @@ import (
 	"github.com/coinbase-samples/ib-api-go/config"
 	profile "github.com/coinbase-samples/ib-api-go/pkg/pbs/profile/v1"
 	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
+	"github.com/coinbase-samples/ib-api-go/websocket"
 	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -192,6 +193,14 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		io.WriteString(w, "ok\n")
 	})
 
+	// Websocket Endpoint
+	pool := websocket.NewPool()
+	go pool.Start()
+
+	gwmux.HandlePath("GET", "/ws", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
+		serveWs(pool, w, r)
+	})
+
 	// Register Service Handlers
 
 	err = profile.RegisterProfileServiceHandler(context.Background(), gwmux, pConn)
@@ -239,6 +248,8 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	logrusLogger.Warnf("checking grpc dials")
 	testOrderDial(app)
 	testProfileDial(app)
+
+	assetPriceUpdater(*pool)
 
 	logrusLogger.Warnf("started gRPC-Gateway on - %v", app.Port)
 
