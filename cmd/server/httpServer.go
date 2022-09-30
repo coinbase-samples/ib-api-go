@@ -10,6 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"go.opencensus.io/plugin/ocgrpc"
+	"go.opencensus.io/plugin/ochttp"
+
 	"github.com/coinbase-samples/ib-api-go/config"
 	profile "github.com/coinbase-samples/ib-api-go/pkg/pbs/profile/v1"
 	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
@@ -135,6 +138,7 @@ func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
 		context.Background(),
 		dialProfileConn,
 		grpc.WithTransportCredentials(dialCreds),
+		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
 	)
 	return conn, err
 }
@@ -220,9 +224,13 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
+	openCensusHandler := &ochttp.Handler{
+		Handler: handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
+	}
+
 	logrusLogger.Debugf("starting http - %v - %v - %v", originsOk, headersOk, methodsOk)
 	gwServer := &http.Server{
-		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(gwmux),
+		Handler:      openCensusHandler,
 		Addr:         fmt.Sprintf(":%s", app.Port),
 		WriteTimeout: 40 * time.Second,
 		ReadTimeout:  40 * time.Second,
