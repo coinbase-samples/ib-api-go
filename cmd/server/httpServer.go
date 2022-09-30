@@ -198,7 +198,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	go pool.Start()
 	logrusLogger.Debugf("created pool and redis client - %v - %v", pool, pool.Redis)
 	status := pool.Redis.Ping()
-	logrusLogger.Debugf("redis connection status -%v", status)
+	logrusLogger.Warnf("redis connection status -%v", status)
 
 	gwmux.HandlePath("GET", "/ws", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		serveWs(pool, w, r)
