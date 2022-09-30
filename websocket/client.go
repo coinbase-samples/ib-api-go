@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-redis/redis"
 	"github.com/gorilla/websocket"
 )
 
 type Client struct {
-	ID    string
-	Conn  *websocket.Conn
-	Pool  *Pool
-	Alias string
+	ID            string
+	Conn          *websocket.Conn
+	Pool          *Pool
+	Alias         string
+	Subscriptions []*redis.PubSub
 }
 
 type Message struct {
@@ -22,6 +24,9 @@ type Message struct {
 
 func (c *Client) Read() {
 	defer func() {
+		for _, sub := range c.Subscriptions {
+			sub.Close()
+		}
 		c.Pool.Unregister <- c
 		c.Conn.Close()
 	}()

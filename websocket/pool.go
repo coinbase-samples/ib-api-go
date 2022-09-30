@@ -2,6 +2,9 @@ package websocket
 
 import (
 	"fmt"
+
+	"github.com/coinbase-samples/ib-api-go/config"
+	"github.com/go-redis/redis"
 )
 
 type Pool struct {
@@ -9,14 +12,20 @@ type Pool struct {
 	Unregister chan *Client
 	Clients    map[*Client]bool
 	Broadcast  chan Message
+	Redis      *redis.Client
 }
 
-func NewPool() *Pool {
+func NewPool(conf config.AppConfig) *Pool {
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%s", conf.RedisEndpoint, conf.RedisPort),
+	})
+
 	return &Pool{
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Clients:    make(map[*Client]bool),
 		Broadcast:  make(chan Message),
+		Redis:      redisClient,
 	}
 }
 

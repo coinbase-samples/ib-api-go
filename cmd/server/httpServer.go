@@ -194,8 +194,11 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	})
 
 	// Websocket Endpoint
-	pool := websocket.NewPool()
+	pool := websocket.NewPool(app)
 	go pool.Start()
+	logrusLogger.Debugf("created pool and redis client - %v - %v", pool, pool.Redis)
+	status := pool.Redis.Ping()
+	logrusLogger.Debugf("redis connection status -%v", status)
 
 	gwmux.HandlePath("GET", "/ws", func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		serveWs(pool, w, r)
@@ -249,7 +252,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	testOrderDial(app)
 	testProfileDial(app)
 
-	assetPriceUpdater(*pool)
+	//assetPriceUpdater(*pool)
 
 	logrusLogger.Warnf("started gRPC-Gateway on - %v", app.Port)
 

@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/dba"
+	"github.com/coinbase-samples/ib-api-go/model"
 	"github.com/coinbase-samples/ib-api-go/websocket"
+	"github.com/go-redis/redis"
 )
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
@@ -26,10 +28,34 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%+v\n", err)
 	}
 
+	orderChannelName := fmt.Sprintf("%s-orders", alias)
+	logrusLogger.Debugf("starting subscription - %v", orderChannelName)
+	orderSub := pool.Redis.Subscribe(orderChannelName)
+	defer orderSub.Close()
+
+	go func() {
+		for {
+			msg, err := orderSub.ReceiveMessage()
+			if err != nil {
+				logrusLogger.Warnf("error receiving order status message - %v", err)
+				return
+			}
+			mess := model.Order{}
+			if err := json.Unmarshal([]byte(msg.Payload), &mess); err != nil {
+				logrusLogger.Warnf("error marshalling order status message - %v", err)
+				return
+			}
+
+			logrusLogger.Debugf("order sub message - %v - %v", alias, mess)
+			conn.WriteJSON(mess)
+		}
+	}()
+
 	client := &websocket.Client{
-		Conn:  conn,
-		Pool:  pool,
-		Alias: query.Get("alias"),
+		Conn:          conn,
+		Pool:          pool,
+		Alias:         alias,
+		Subscriptions: []*redis.PubSub{orderSub},
 	}
 
 	pool.Register <- client
@@ -59,22 +85,7 @@ func assetPriceUpdater(pool websocket.Pool) {
 					}
 
 					//move this later
-					for client := range pool.Clients {
-
-						orders, err := dba.Repo.ListOrders(context.Background(), client.Alias)
-						if err != nil {
-							logrusLogger.Warnf("error reading orders for price update - %v", err)
-						} else {
-							if len(orders) < 1 {
-								logrusLogger.Debugf("skipping order update -%v", orders)
-							} else {
-								body, _ := json.Marshal(orders)
-								message := websocket.Message{Type: "orders", Body: string(body)}
-
-								client.Conn.WriteJSON(message)
-							}
-						}
-					}
+					checkOrdersFromDynamo(pool.Clients)
 				}
 			case <-quit:
 				ticker.Stop()
@@ -82,4 +93,22 @@ func assetPriceUpdater(pool websocket.Pool) {
 			}
 		}
 	}()
+}
+
+func checkOrdersFromDynamo(clients map[*websocket.Client]bool) {
+	for client := range clients {
+		orders, err := dba.Repo.ListOrders(context.Background(), client.Alias)
+		if err != nil {
+			logrusLogger.Warnf("error reading orders for price update - %v", err)
+		} else {
+			if len(orders) < 1 {
+				logrusLogger.Debugf("skipping order update -%v", orders)
+			} else {
+				body, _ := json.Marshal(orders)
+				message := websocket.Message{Type: "orders", Body: string(body)}
+
+				client.Conn.WriteJSON(message)
+			}
+		}
+	}
 }

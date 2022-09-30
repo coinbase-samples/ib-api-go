@@ -27,6 +27,9 @@ type AppConfig struct {
 	BalanceTableName  string `mapstructure:"BALANCE_TABLE"`
 	AssetTableName    string `mapstructure:"ASSET_TABLE"`
 	ActivityTableName string `mapstructure:"ACTIVITY_TABLE"`
+
+	RedisEndpoint string `mapstructure:"REDIS_ENDPOINT_ADDRESS"`
+	RedisPort     string `mapstructure:"REDIS_ENDPOINT_PORT"`
 }
 
 func (a AppConfig) IsLocalEnv() bool {
@@ -60,6 +63,9 @@ func Setup(app *AppConfig) {
 	viper.SetDefault("BALANCE_TABLE", "Balance")
 	viper.SetDefault("ASSET_TABLE", "Asset")
 	viper.SetDefault("ACTIVITY_TABLE", "Activity")
+
+	viper.SetDefault("REDIS_ENDPOINT_ADDRESS", "localhost")
+	viper.SetDefault("REDIS_ENDPOINT_PORT", "6379")
 
 	err := viper.ReadInConfig()
 	if err != nil {
