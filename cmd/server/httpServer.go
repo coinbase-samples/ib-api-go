@@ -50,7 +50,7 @@ func testOrderDial(app config.AppConfig) {
 	clientCreds := getGrpcCredentials(app)
 	grpc.EnableTracing = true
 
-	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(clientCreds)) //insecure.NewCredentials()))
+	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(clientCreds))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -94,9 +94,10 @@ func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
 
 func testProfileDial(app config.AppConfig) {
 	dialProfileConn := getProfileConnAddress(app)
+	clientCreds := getGrpcCredentials(app)
 	grpc.EnableTracing = true
 
-	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(clientCreds))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -164,16 +165,16 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 
 		if strings.HasPrefix(r.URL.String(), "/v1/profile") {
 			md["x-route-id"] = app.UserRouteId
-			logrusLogger.Warnln("/v1/profile adding profile route id", app.UserRouteId)
+			logrusLogger.Debugln("/v1/profile adding profile route id", app.UserRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/order") {
 			md["x-route-id"] = app.OrderRouteId
-			logrusLogger.Warnln("/v1/order adding order route id", app.OrderRouteId)
+			logrusLogger.Debugln("/v1/order adding order route id", app.OrderRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/balances") {
 			md["x-route-id"] = app.OrderRouteId
-			logrusLogger.Warnln("/v1/balances adding order route id", app.OrderRouteId)
+			logrusLogger.Debugln("/v1/balances adding order route id", app.OrderRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/assets") {
 			md["x-route-id"] = app.OrderRouteId
-			logrusLogger.Warnln("/v1/assets adding order route id", app.OrderRouteId)
+			logrusLogger.Debugln("/v1/assets adding order route id", app.OrderRouteId)
 		} else {
 			logrusLogger.Warnf("%s is an unknown route", r.URL.String())
 		}
