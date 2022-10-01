@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"crypto/tls"
 	"fmt"
 
 	"github.com/coinbase-samples/ib-api-go/config"
@@ -18,6 +19,9 @@ type Pool struct {
 func NewPool(conf config.AppConfig) *Pool {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf("%s:%s", conf.RedisEndpoint, conf.RedisPort),
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		},
 	})
 
 	return &Pool{
