@@ -304,7 +304,13 @@ func (m *Asset) validate(all bool) error {
 
 	// no validation rules for MaxTransactionAmount
 
-	// no validation rules for Price
+	// no validation rules for HighOffer
+
+	// no validation rules for LowBid
+
+	// no validation rules for Slippage
+
+	// no validation rules for Spread
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {

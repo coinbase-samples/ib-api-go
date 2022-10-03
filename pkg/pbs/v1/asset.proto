@@ -21,12 +21,15 @@ message Asset {
   string name = 3;
   string minTransactionAmount = 4;
   string maxTransactionAmount = 5;
-  string price = 6;
-  google.protobuf.Timestamp createdAt = 7;
-  string marketCap = 8;
-  string volume = 9;
-  string supply = 10;
-  string direction = 11;
+  string highOffer = 6;
+  string lowBid = 7;
+  string slippage = 8;
+  string spread = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  string marketCap = 11;
+  string volume = 12;
+  string supply = 13;
+  string direction = 14;
 }
 
 message GetAssetRequest {
