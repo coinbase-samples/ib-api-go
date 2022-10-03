@@ -64,8 +64,8 @@ func Setup(app *AppConfig) {
 	viper.SetDefault("ASSET_TABLE", "Asset")
 	viper.SetDefault("ACTIVITY_TABLE", "Activity")
 
-	viper.SetDefault("REDIS_ENDPOINT_ADDRESS", "localhost")
-	viper.SetDefault("REDIS_ENDPOINT_PORT", "6379")
+	viper.SetDefault("REDIS_ENDPOINT_ADDRESS", "127.0.0.1")
+	viper.SetDefault("REDIS_ENDPOINT_PORT", "7000")
 
 	err := viper.ReadInConfig()
 	if err != nil {

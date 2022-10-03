@@ -13,16 +13,23 @@ type Pool struct {
 	Unregister chan *Client
 	Clients    map[*Client]bool
 	Broadcast  chan Message
-	Redis      *redis.Client
+	Redis      *redis.ClusterClient
 }
 
 func NewPool(conf config.AppConfig) *Pool {
-	redisClient := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", conf.RedisEndpoint, conf.RedisPort),
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS12,
-		},
-	})
+	addrs := []string{fmt.Sprintf("%s:%s", conf.RedisEndpoint, conf.RedisPort)}
+	var redisClient *redis.ClusterClient
+
+	if conf.IsLocalEnv() {
+		redisClient = redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs: addrs,
+		})
+	} else {
+		redisClient = redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs:     addrs,
+			TLSConfig: &tls.Config{},
+		})
+	}
 
 	return &Pool{
 		Register:   make(chan *Client),

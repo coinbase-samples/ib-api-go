@@ -21,10 +21,12 @@ func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Ord
 	out, err := m.Svc.Query(context.TODO(), &dynamodb.QueryInput{
 		TableName:              aws.String(m.App.ActivityTableName),
 		KeyConditionExpression: aws.String("userId = :a"),
-		FilterExpression:       aws.String("orderStatus = :b"),
+		FilterExpression:       aws.String("orderStatus = :b OR orderStatus = :c OR orderStatus = :d"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":a": &types.AttributeValueMemberS{Value: userId},
 			":b": &types.AttributeValueMemberS{Value: "open"},
+			":c": &types.AttributeValueMemberS{Value: "pendingInternal"},
+			":d": &types.AttributeValueMemberS{Value: "pendingVenue"},
 		},
 	})
 

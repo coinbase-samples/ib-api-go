@@ -13,6 +13,16 @@ import (
 	"github.com/go-redis/redis"
 )
 
+type OrderWebsocketMessage struct {
+	MessageType string      `json:"type"`
+	Data        model.Order `json:"data"`
+}
+
+type OrdersWebsocketMessage struct {
+	MessageType string        `json:"type"`
+	Data        []model.Order `json:"data"`
+}
+
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	logrusLogger.Debugln("WebSocket Endpoint Hit", r.URL.Query())
 
@@ -32,15 +42,11 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	logrusLogger.Debugf("starting subscription - %v", orderChannelName)
 	orderSub := pool.Redis.Subscribe(orderChannelName)
 	defer orderSub.Close()
+	ch := orderSub.Channel()
 
 	go func() {
-		for {
-			msg, err := orderSub.ReceiveMessage()
-			if err != nil {
-				logrusLogger.Warnf("error receiving order status message - %v", err)
-				return
-			}
-			mess := model.Order{}
+		for msg := range ch {
+			mess := OrderWebsocketMessage{}
 			if err := json.Unmarshal([]byte(msg.Payload), &mess); err != nil {
 				logrusLogger.Warnf("error marshalling order status message - %v", err)
 				return
@@ -57,6 +63,9 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 		Alias:         alias,
 		Subscriptions: []*redis.PubSub{orderSub},
 	}
+
+	//publish initial open/pending orders
+	checkOrdersFromDynamo(client)
 
 	pool.Register <- client
 	client.Read()
@@ -84,8 +93,6 @@ func assetPriceUpdater(pool websocket.Pool) {
 						}
 					}
 
-					//move this later
-					checkOrdersFromDynamo(pool.Clients)
 				}
 			case <-quit:
 				ticker.Stop()
@@ -95,20 +102,19 @@ func assetPriceUpdater(pool websocket.Pool) {
 	}()
 }
 
-func checkOrdersFromDynamo(clients map[*websocket.Client]bool) {
-	for client := range clients {
-		orders, err := dba.Repo.ListOrders(context.Background(), client.Alias)
-		if err != nil {
-			logrusLogger.Warnf("error reading orders for price update - %v", err)
-		} else {
-			if len(orders) < 1 {
-				logrusLogger.Debugf("skipping order update -%v", orders)
-			} else {
-				body, _ := json.Marshal(orders)
-				message := websocket.Message{Type: "orders", Body: string(body)}
+func checkOrdersFromDynamo(client *websocket.Client) {
 
-				client.Conn.WriteJSON(message)
-			}
+	orders, err := dba.Repo.ListOrders(context.Background(), client.Alias)
+	if err != nil {
+		logrusLogger.Warnf("error reading orders for price update - %v", err)
+	} else {
+		if len(orders) < 1 {
+			logrusLogger.Debugf("skipping order update -%v", orders)
+		} else {
+			message := OrdersWebsocketMessage{MessageType: "orders", Data: orders}
+			logrusLogger.Debugf("writing initial order status - %v", message)
+			client.Conn.WriteJSON(message)
 		}
 	}
+
 }

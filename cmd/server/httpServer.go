@@ -2,15 +2,12 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
 	"time"
 
-	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/plugin/ochttp"
 
 	"github.com/coinbase-samples/ib-api-go/config"
@@ -19,130 +16,8 @@ import (
 	"github.com/coinbase-samples/ib-api-go/websocket"
 	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
-
-func getGrpcCredentials(app config.AppConfig) credentials.TransportCredentials {
-	if app.IsLocalEnv() {
-		return insecure.NewCredentials()
-	} else {
-		return credentials.NewTLS(&tls.Config{
-			InsecureSkipVerify: true,
-		})
-	}
-}
-
-func getOrderConnAddress(app config.AppConfig) string {
-	if app.IsLocalEnv() {
-		return fmt.Sprintf("%s:%s", app.OrderMgrHostname, app.OrderGrpcPort)
-	}
-	return fmt.Sprintf("%s:443", app.OrderMgrHostname)
-}
-
-func getProfileConnAddress(app config.AppConfig) string {
-	if app.IsLocalEnv() {
-		return fmt.Sprintf("%s:%s", app.UserMgrHostname, app.UserGrpcPort)
-	}
-	return fmt.Sprintf("%s:443", app.UserMgrHostname)
-}
-
-func testOrderDial(app config.AppConfig) {
-	dialOrderConn := getOrderConnAddress(app)
-	clientCreds := getGrpcCredentials(app)
-	grpc.EnableTracing = true
-
-	conn, err := grpc.Dial(dialOrderConn, grpc.WithTransportCredentials(clientCreds))
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	defer conn.Close()
-
-	c := v1.NewAssetServiceClient(conn)
-
-	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
-	ctx = metadata.NewOutgoingContext(ctx, md)
-	defer cancel()
-	logrusLogger.Warnf("sending order test %s - %v - %v", dialOrderConn, ctx, md)
-	r, err := c.ListAssets(ctx, &v1.ListAssetsRequest{})
-	grpc.EnableTracing = false
-
-	if err != nil {
-		logrusLogger.Warnf("could not greet order: %v", err)
-		return
-	}
-	logrusLogger.Warnf("Greeting Order: %s", r.Data)
-}
-
-func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
-	dialOrderConn := getOrderConnAddress(app)
-	clientCreds := getGrpcCredentials(app)
-
-	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
-	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	logrusLogger.Debugln("order dial", dialOrderConn, md)
-	// Create a client connection to the gRPC server we just started
-	// This is where the gRPC-Gateway proxies the requests
-
-	conn, err := grpc.DialContext(
-		ctx,
-		dialOrderConn,
-		grpc.WithTransportCredentials(clientCreds),
-	)
-	return conn, err
-}
-
-func testProfileDial(app config.AppConfig) {
-	dialProfileConn := getProfileConnAddress(app)
-	clientCreds := getGrpcCredentials(app)
-	grpc.EnableTracing = true
-
-	conn, err := grpc.Dial(dialProfileConn, grpc.WithTransportCredentials(clientCreds))
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	defer conn.Close()
-	c := profile.NewProfileServiceClient(conn)
-
-	var testId = "c5af3271-7185-4a52-9d0c-1c4b418317d8"
-	if app.IsLocalEnv() {
-		testId = "c7e34d37-f678-4096-94f7-3cad7d3258b9"
-	}
-
-	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	md := metadata.New(map[string]string{"x-route-id": app.UserRouteId})
-	ctx = metadata.NewOutgoingContext(ctx, md)
-	logrusLogger.Debugf("dialing profile with - %s - %v", dialProfileConn, ctx, testId)
-	r, err := c.ReadProfile(ctx, &profile.ReadProfileRequest{Id: testId})
-	grpc.EnableTracing = false
-
-	if err != nil {
-		logrusLogger.Warnf("could not greet profile: %v", err)
-		return
-	}
-	logrusLogger.Warnf("Greeting Profile: %s", r.UserName)
-}
-
-func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
-	dialProfileConn := getProfileConnAddress(app)
-	dialCreds := getGrpcCredentials(app)
-	logrusLogger.Debugln("connecting to profile localhost grpc", dialProfileConn)
-	// Create a client connection to the gRPC server we just started
-	// This is where the gRPC-Gateway proxies the requests
-	conn, err := grpc.DialContext(
-		context.Background(),
-		dialProfileConn,
-		grpc.WithTransportCredentials(dialCreds),
-		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
-	)
-	return conn, err
-}
 
 func setupHttp(app config.AppConfig) (*http.Server, error) {
 	logrusLogger.Debugln("dialing order manager")
