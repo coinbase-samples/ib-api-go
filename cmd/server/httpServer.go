@@ -127,7 +127,7 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 	testOrderDial(app)
 	testProfileDial(app)
 
-	//assetPriceUpdater(*pool)
+	assetPriceUpdater(*pool)
 
 	logrusLogger.Warnf("started gRPC-Gateway on - %v", app.Port)
 
