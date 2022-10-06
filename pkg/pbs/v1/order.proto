@@ -157,6 +157,12 @@ message SendVenueOrderRequest {
 
 message SendVenueOrderResponse {}
 
+message SendVenueOrderCancelRequest {
+  string order_id = 1 [(validate.rules).string.len = 36];
+}
+
+message SendVenueOrderCancelResponse {}
+
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse) {
     option (google.api.http) = {
@@ -189,6 +195,12 @@ service OrderService {
   rpc SendVenueOrder(SendVenueOrderRequest) returns (SendVenueOrderResponse) {
     option (google.api.http) = {
       post: "/v1/venue/{order_id}",
+      body: "*"
+    };
+  }
+  rpc SendVenueOrderCancel(SendVenueOrderCancelRequest) returns (SendVenueOrderCancelResponse) {
+    option (google.api.http) = {
+      post: "/v1/venue/{order_id}/cancel",
       body: "*"
     };
   }

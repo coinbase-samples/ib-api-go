@@ -1633,3 +1633,221 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SendVenueOrderResponseValidationError{}
+
+// Validate checks the field values on SendVenueOrderCancelRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SendVenueOrderCancelRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendVenueOrderCancelRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendVenueOrderCancelRequestMultiError, or nil if none found.
+func (m *SendVenueOrderCancelRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendVenueOrderCancelRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetOrderId()) != 36 {
+		err := SendVenueOrderCancelRequestValidationError{
+			field:  "OrderId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if len(errors) > 0 {
+		return SendVenueOrderCancelRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendVenueOrderCancelRequestMultiError is an error wrapping multiple
+// validation errors returned by SendVenueOrderCancelRequest.ValidateAll() if
+// the designated constraints aren't met.
+type SendVenueOrderCancelRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendVenueOrderCancelRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendVenueOrderCancelRequestMultiError) AllErrors() []error { return m }
+
+// SendVenueOrderCancelRequestValidationError is the validation error returned
+// by SendVenueOrderCancelRequest.Validate if the designated constraints
+// aren't met.
+type SendVenueOrderCancelRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendVenueOrderCancelRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendVenueOrderCancelRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendVenueOrderCancelRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendVenueOrderCancelRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendVenueOrderCancelRequestValidationError) ErrorName() string {
+	return "SendVenueOrderCancelRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendVenueOrderCancelRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendVenueOrderCancelRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendVenueOrderCancelRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendVenueOrderCancelRequestValidationError{}
+
+// Validate checks the field values on SendVenueOrderCancelResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SendVenueOrderCancelResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendVenueOrderCancelResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendVenueOrderCancelResponseMultiError, or nil if none found.
+func (m *SendVenueOrderCancelResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendVenueOrderCancelResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SendVenueOrderCancelResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendVenueOrderCancelResponseMultiError is an error wrapping multiple
+// validation errors returned by SendVenueOrderCancelResponse.ValidateAll() if
+// the designated constraints aren't met.
+type SendVenueOrderCancelResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendVenueOrderCancelResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendVenueOrderCancelResponseMultiError) AllErrors() []error { return m }
+
+// SendVenueOrderCancelResponseValidationError is the validation error returned
+// by SendVenueOrderCancelResponse.Validate if the designated constraints
+// aren't met.
+type SendVenueOrderCancelResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendVenueOrderCancelResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendVenueOrderCancelResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendVenueOrderCancelResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendVenueOrderCancelResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendVenueOrderCancelResponseValidationError) ErrorName() string {
+	return "SendVenueOrderCancelResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendVenueOrderCancelResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendVenueOrderCancelResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendVenueOrderCancelResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendVenueOrderCancelResponseValidationError{}
