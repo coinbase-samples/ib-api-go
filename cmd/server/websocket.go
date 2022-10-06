@@ -8,20 +8,9 @@ import (
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/dba"
-	"github.com/coinbase-samples/ib-api-go/model"
 	"github.com/coinbase-samples/ib-api-go/websocket"
 	"github.com/go-redis/redis"
 )
-
-type OrderWebsocketMessage struct {
-	MessageType string      `json:"type"`
-	Data        model.Order `json:"data"`
-}
-
-type OrdersWebsocketMessage struct {
-	MessageType string        `json:"type"`
-	Data        []model.Order `json:"data"`
-}
 
 func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	logrusLogger.Debugln("WebSocket Endpoint Hit", r.URL.Query())
@@ -46,7 +35,7 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		for msg := range ch {
-			mess := OrderWebsocketMessage{}
+			mess := websocket.Message{}
 			if err := json.Unmarshal([]byte(msg.Payload), &mess); err != nil {
 				logrusLogger.Warnf("error marshalling order status message - %v", err)
 				return
@@ -111,7 +100,11 @@ func checkOrdersFromDynamo(client *websocket.Client) {
 		if len(orders) < 1 {
 			logrusLogger.Debugf("skipping order update -%v", orders)
 		} else {
-			message := OrdersWebsocketMessage{MessageType: "orders", Data: orders}
+			body, err := json.Marshal(orders)
+			if err != nil {
+				logrusLogger.Warnf("issue marshalling existing orders - %v", err)
+			}
+			message := websocket.Message{Type: "orders", Body: string(body)}
 			logrusLogger.Debugf("writing initial order status - %v", message)
 			client.Conn.WriteJSON(message)
 		}
