@@ -95,6 +95,8 @@ message ReadOrderResponse {
   string average_filled_price = 14;
   string commission = 15;
   string exchange_fee = 16;
+  string cancel_reason = 17;
+  string failure_reason = 18;
 }
 
 message ListOrdersRequest {
@@ -118,6 +120,8 @@ message UpdateOrderRequest {
   string average_filled_price = 5;
   string commission = 6;
   string exchange_fee = 7;
+  string cancel_reason = 8;
+  string failure_reason = 9;
 }
 
 message UpdateOrderResponse {
@@ -137,6 +141,8 @@ message UpdateOrderResponse {
   string average_filled_price = 14;
   string commission = 15;
   string exchange_fee = 16;
+  string cancel_reason = 17;
+  string failure_reason = 18;
 }
 
 message UpdateOrderFeedRequest {

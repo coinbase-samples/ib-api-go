@@ -566,6 +566,10 @@ func (m *ReadOrderResponse) validate(all bool) error {
 
 	// no validation rules for ExchangeFee
 
+	// no validation rules for CancelReason
+
+	// no validation rules for FailureReason
+
 	if len(errors) > 0 {
 		return ReadOrderResponseMultiError(errors)
 	}
@@ -932,6 +936,10 @@ func (m *UpdateOrderRequest) validate(all bool) error {
 
 	// no validation rules for ExchangeFee
 
+	// no validation rules for CancelReason
+
+	// no validation rules for FailureReason
+
 	if len(errors) > 0 {
 		return UpdateOrderRequestMultiError(errors)
 	}
@@ -1119,6 +1127,10 @@ func (m *UpdateOrderResponse) validate(all bool) error {
 	// no validation rules for Commission
 
 	// no validation rules for ExchangeFee
+
+	// no validation rules for CancelReason
+
+	// no validation rules for FailureReason
 
 	if len(errors) > 0 {
 		return UpdateOrderResponseMultiError(errors)
