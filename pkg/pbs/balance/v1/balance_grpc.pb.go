@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: pkg/pbs/v1/balance.proto
+// source: pkg/pbs/balance/v1/balance.proto
 
 package v1
 
@@ -35,7 +35,7 @@ func NewBalanceServiceClient(cc grpc.ClientConnInterface) BalanceServiceClient {
 
 func (c *balanceServiceClient) ListBalances(ctx context.Context, in *ListBalancesRequest, opts ...grpc.CallOption) (*ListBalancesResponse, error) {
 	out := new(ListBalancesResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.BalanceService/ListBalances", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.balance.v1.BalanceService/ListBalances", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _BalanceService_ListBalances_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.BalanceService/ListBalances",
+		FullMethod: "/pkg.pbs.balance.v1.BalanceService/ListBalances",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BalanceServiceServer).ListBalances(ctx, req.(*ListBalancesRequest))
@@ -92,7 +92,7 @@ func _BalanceService_ListBalances_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var BalanceService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pkg.pbs.v1.BalanceService",
+	ServiceName: "pkg.pbs.balance.v1.BalanceService",
 	HandlerType: (*BalanceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -101,5 +101,5 @@ var BalanceService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/pbs/v1/balance.proto",
+	Metadata: "pkg/pbs/balance/v1/balance.proto",
 }

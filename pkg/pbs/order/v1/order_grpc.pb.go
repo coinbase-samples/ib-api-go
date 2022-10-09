@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: pkg/pbs/v1/order.proto
+// source: pkg/pbs/order/v1/order.proto
 
 package v1
 
@@ -41,7 +41,7 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 
 func (c *orderServiceClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
 	out := new(CreateOrderResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/CreateOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/CreateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (c *orderServiceClient) CreateOrder(ctx context.Context, in *CreateOrderReq
 
 func (c *orderServiceClient) ReadOrder(ctx context.Context, in *ReadOrderRequest, opts ...grpc.CallOption) (*ReadOrderResponse, error) {
 	out := new(ReadOrderResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/ReadOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/ReadOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (c *orderServiceClient) ReadOrder(ctx context.Context, in *ReadOrderRequest
 
 func (c *orderServiceClient) ListOrders(ctx context.Context, in *ListOrdersRequest, opts ...grpc.CallOption) (*ListOrdersResponse, error) {
 	out := new(ListOrdersResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/ListOrders", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/ListOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (c *orderServiceClient) ListOrders(ctx context.Context, in *ListOrdersReque
 
 func (c *orderServiceClient) UpdateOrder(ctx context.Context, in *UpdateOrderRequest, opts ...grpc.CallOption) (*UpdateOrderResponse, error) {
 	out := new(UpdateOrderResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/UpdateOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/UpdateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (c *orderServiceClient) UpdateOrder(ctx context.Context, in *UpdateOrderReq
 
 func (c *orderServiceClient) UpdateOrderFeed(ctx context.Context, in *UpdateOrderFeedRequest, opts ...grpc.CallOption) (*UpdateOrderFeedResponse, error) {
 	out := new(UpdateOrderFeedResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/UpdateOrderFeed", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/UpdateOrderFeed", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (c *orderServiceClient) UpdateOrderFeed(ctx context.Context, in *UpdateOrde
 
 func (c *orderServiceClient) SendVenueOrder(ctx context.Context, in *SendVenueOrderRequest, opts ...grpc.CallOption) (*SendVenueOrderResponse, error) {
 	out := new(SendVenueOrderResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/SendVenueOrder", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/SendVenueOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (c *orderServiceClient) SendVenueOrder(ctx context.Context, in *SendVenueOr
 
 func (c *orderServiceClient) SendVenueOrderCancel(ctx context.Context, in *SendVenueOrderCancelRequest, opts ...grpc.CallOption) (*SendVenueOrderCancelResponse, error) {
 	out := new(SendVenueOrderCancelResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.OrderService/SendVenueOrderCancel", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.order.v1.OrderService/SendVenueOrderCancel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func _OrderService_CreateOrder_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/CreateOrder",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/CreateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).CreateOrder(ctx, req.(*CreateOrderRequest))
@@ -182,7 +182,7 @@ func _OrderService_ReadOrder_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/ReadOrder",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/ReadOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).ReadOrder(ctx, req.(*ReadOrderRequest))
@@ -200,7 +200,7 @@ func _OrderService_ListOrders_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/ListOrders",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/ListOrders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).ListOrders(ctx, req.(*ListOrdersRequest))
@@ -218,7 +218,7 @@ func _OrderService_UpdateOrder_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/UpdateOrder",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/UpdateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).UpdateOrder(ctx, req.(*UpdateOrderRequest))
@@ -236,7 +236,7 @@ func _OrderService_UpdateOrderFeed_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/UpdateOrderFeed",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/UpdateOrderFeed",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).UpdateOrderFeed(ctx, req.(*UpdateOrderFeedRequest))
@@ -254,7 +254,7 @@ func _OrderService_SendVenueOrder_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/SendVenueOrder",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/SendVenueOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).SendVenueOrder(ctx, req.(*SendVenueOrderRequest))
@@ -272,7 +272,7 @@ func _OrderService_SendVenueOrderCancel_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.OrderService/SendVenueOrderCancel",
+		FullMethod: "/pkg.pbs.order.v1.OrderService/SendVenueOrderCancel",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OrderServiceServer).SendVenueOrderCancel(ctx, req.(*SendVenueOrderCancelRequest))
@@ -284,7 +284,7 @@ func _OrderService_SendVenueOrderCancel_Handler(srv interface{}, ctx context.Con
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var OrderService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pkg.pbs.v1.OrderService",
+	ServiceName: "pkg.pbs.order.v1.OrderService",
 	HandlerType: (*OrderServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -317,5 +317,5 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/pbs/v1/order.proto",
+	Metadata: "pkg/pbs/order/v1/order.proto",
 }

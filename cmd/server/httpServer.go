@@ -11,8 +11,10 @@ import (
 	"go.opencensus.io/plugin/ochttp"
 
 	"github.com/coinbase-samples/ib-api-go/config"
+	asset "github.com/coinbase-samples/ib-api-go/pkg/pbs/asset/v1"
+	balance "github.com/coinbase-samples/ib-api-go/pkg/pbs/balance/v1"
+	order "github.com/coinbase-samples/ib-api-go/pkg/pbs/order/v1"
 	profile "github.com/coinbase-samples/ib-api-go/pkg/pbs/profile/v1"
-	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
 	"github.com/coinbase-samples/ib-api-go/websocket"
 	"github.com/gorilla/handlers"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -86,15 +88,15 @@ func setupHttp(app config.AppConfig) (*http.Server, error) {
 		logrusLogger.Fatalln("Failed to register profile:", err)
 	}
 
-	err = v1.RegisterOrderServiceHandler(context.Background(), gwmux, oConn)
+	err = order.RegisterOrderServiceHandler(context.Background(), gwmux, oConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register order:", err)
 	}
-	err = v1.RegisterBalanceServiceHandler(context.Background(), gwmux, oConn)
+	err = balance.RegisterBalanceServiceHandler(context.Background(), gwmux, oConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register balance:", err)
 	}
-	err = v1.RegisterAssetServiceHandler(context.Background(), gwmux, oConn)
+	err = asset.RegisterAssetServiceHandler(context.Background(), gwmux, oConn)
 	if err != nil {
 		logrusLogger.Fatalln("Failed to register asset:", err)
 	}

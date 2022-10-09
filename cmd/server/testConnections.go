@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/config"
+	asset "github.com/coinbase-samples/ib-api-go/pkg/pbs/asset/v1"
 	profile "github.com/coinbase-samples/ib-api-go/pkg/pbs/profile/v1"
-	v1 "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -56,7 +56,7 @@ func testOrderDial(app config.AppConfig) {
 	}
 	defer conn.Close()
 
-	c := v1.NewAssetServiceClient(conn)
+	c := asset.NewAssetServiceClient(conn)
 
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -64,7 +64,7 @@ func testOrderDial(app config.AppConfig) {
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	defer cancel()
 	logrusLogger.Warnf("sending order test %s - %v - %v", dialOrderConn, ctx, md)
-	r, err := c.ListAssets(ctx, &v1.ListAssetsRequest{})
+	r, err := c.ListAssets(ctx, &asset.ListAssetsRequest{})
 	grpc.EnableTracing = false
 
 	if err != nil {

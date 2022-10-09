@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package pkg.pbs.v1;
+package pkg.pbs.order.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/v1";
+option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/order/v1";
 
 enum OrderSide {
   ORDER_SIDE_UNSPECIFIED = 0;

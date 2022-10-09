@@ -16,12 +16,12 @@
 
 syntax = "proto3";
 
-package protos.ledger;
+package pkg.pbs.ledger.v1;
 
 import "google/protobuf/wrappers.proto";
-import "protos/ledger/model.proto";
+import "pkg/pbs/ledger/v1/model.proto";
 
-option go_package = "github.com/coinbase-samples/ib-ledger-go/protos/ledger";
+option go_package = "github.com/coinbase-samples/ib-ledger-go/pkg/pbs/ledger/v1";
 
 // Ledger API
 service Ledger {

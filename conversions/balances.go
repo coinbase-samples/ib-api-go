@@ -2,8 +2,8 @@ package conversions
 
 import (
 	"github.com/coinbase-samples/ib-api-go/model"
-	"github.com/coinbase-samples/ib-api-go/pkg/pbs/ledger"
-	balance "github.com/coinbase-samples/ib-api-go/pkg/pbs/v1"
+	balance "github.com/coinbase-samples/ib-api-go/pkg/pbs/balance/v1"
+	ledger "github.com/coinbase-samples/ib-api-go/pkg/pbs/ledger/v1"
 )
 
 func ConvertListBalancesToProto(o model.Balances) balance.ListBalancesResponse {

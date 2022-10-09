@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             (unknown)
-// source: pkg/pbs/v1/asset.proto
+// source: pkg/pbs/asset/v1/asset.proto
 
 package v1
 
@@ -36,7 +36,7 @@ func NewAssetServiceClient(cc grpc.ClientConnInterface) AssetServiceClient {
 
 func (c *assetServiceClient) ListAssets(ctx context.Context, in *ListAssetsRequest, opts ...grpc.CallOption) (*ListAssetsResponse, error) {
 	out := new(ListAssetsResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.AssetService/ListAssets", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.asset.v1.AssetService/ListAssets", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *assetServiceClient) ListAssets(ctx context.Context, in *ListAssetsReque
 
 func (c *assetServiceClient) GetAsset(ctx context.Context, in *GetAssetRequest, opts ...grpc.CallOption) (*GetAssetResponse, error) {
 	out := new(GetAssetResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.v1.AssetService/GetAsset", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pkg.pbs.asset.v1.AssetService/GetAsset", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func _AssetService_ListAssets_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.AssetService/ListAssets",
+		FullMethod: "/pkg.pbs.asset.v1.AssetService/ListAssets",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AssetServiceServer).ListAssets(ctx, req.(*ListAssetsRequest))
@@ -112,7 +112,7 @@ func _AssetService_GetAsset_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pkg.pbs.v1.AssetService/GetAsset",
+		FullMethod: "/pkg.pbs.asset.v1.AssetService/GetAsset",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AssetServiceServer).GetAsset(ctx, req.(*GetAssetRequest))
@@ -124,7 +124,7 @@ func _AssetService_GetAsset_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AssetService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pkg.pbs.v1.AssetService",
+	ServiceName: "pkg.pbs.asset.v1.AssetService",
 	HandlerType: (*AssetServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -137,5 +137,5 @@ var AssetService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/pbs/v1/asset.proto",
+	Metadata: "pkg/pbs/asset/v1/asset.proto",
 }

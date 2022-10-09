@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package pkg.pbs.v1;
+package pkg.pbs.asset.v1;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/v1";
+option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/asset/v1";
 
 message ListAssetsRequest {}
 
