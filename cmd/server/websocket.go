@@ -29,7 +29,7 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	}
 
 	orderChannelName := fmt.Sprintf("%s-orders", alias)
-	logrusLogger.Debugf("starting subscription - %v", orderChannelName)
+	logrusLogger.Warnf("starting subscription - %v", orderChannelName)
 	orderSub := pool.Redis.Subscribe(orderChannelName)
 	defer orderSub.Close()
 	ch := orderSub.Channel()
@@ -42,7 +42,7 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			logrusLogger.Debugf("order sub message - %v - %v", alias, mess)
+			logrusLogger.Warnf("order sub message - %v - %v", alias, mess)
 			conn.WriteJSON(mess)
 		}
 	}()
