@@ -22,12 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LedgerClient interface {
-	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
 	InitializeAccount(ctx context.Context, in *InitializeAccountRequest, opts ...grpc.CallOption) (*InitializeAccountResponse, error)
-	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	GetAccounts(ctx context.Context, in *GetAccountsRequest, opts ...grpc.CallOption) (*GetAccountsResponse, error)
-	GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
-	GetBalances(ctx context.Context, in *GetBalancesRequest, opts ...grpc.CallOption) (*GetBalancesResponse, error)
 	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
 	PartialReleaseHold(ctx context.Context, in *PartialReleaseHoldRequest, opts ...grpc.CallOption) (*PartialReleaseHoldResponse, error)
 	FinalizeTransaction(ctx context.Context, in *FinalizeTransactionRequest, opts ...grpc.CallOption) (*FinalizeTransactionResponse, error)
@@ -41,15 +37,6 @@ func NewLedgerClient(cc grpc.ClientConnInterface) LedgerClient {
 	return &ledgerClient{cc}
 }
 
-func (c *ledgerClient) HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error) {
-	out := new(HealthCheckResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.ledger.v1.Ledger/HealthCheck", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *ledgerClient) InitializeAccount(ctx context.Context, in *InitializeAccountRequest, opts ...grpc.CallOption) (*InitializeAccountResponse, error) {
 	out := new(InitializeAccountResponse)
 	err := c.cc.Invoke(ctx, "/pkg.pbs.ledger.v1.Ledger/InitializeAccount", in, out, opts...)
@@ -59,36 +46,9 @@ func (c *ledgerClient) InitializeAccount(ctx context.Context, in *InitializeAcco
 	return out, nil
 }
 
-func (c *ledgerClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
-	out := new(GetAccountResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.ledger.v1.Ledger/GetAccount", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *ledgerClient) GetAccounts(ctx context.Context, in *GetAccountsRequest, opts ...grpc.CallOption) (*GetAccountsResponse, error) {
 	out := new(GetAccountsResponse)
 	err := c.cc.Invoke(ctx, "/pkg.pbs.ledger.v1.Ledger/GetAccounts", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ledgerClient) GetBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error) {
-	out := new(GetBalanceResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.ledger.v1.Ledger/GetBalance", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *ledgerClient) GetBalances(ctx context.Context, in *GetBalancesRequest, opts ...grpc.CallOption) (*GetBalancesResponse, error) {
-	out := new(GetBalancesResponse)
-	err := c.cc.Invoke(ctx, "/pkg.pbs.ledger.v1.Ledger/GetBalances", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -126,12 +86,8 @@ func (c *ledgerClient) FinalizeTransaction(ctx context.Context, in *FinalizeTran
 // All implementations must embed UnimplementedLedgerServer
 // for forward compatibility
 type LedgerServer interface {
-	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
 	InitializeAccount(context.Context, *InitializeAccountRequest) (*InitializeAccountResponse, error)
-	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
 	GetAccounts(context.Context, *GetAccountsRequest) (*GetAccountsResponse, error)
-	GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
-	GetBalances(context.Context, *GetBalancesRequest) (*GetBalancesResponse, error)
 	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
 	PartialReleaseHold(context.Context, *PartialReleaseHoldRequest) (*PartialReleaseHoldResponse, error)
 	FinalizeTransaction(context.Context, *FinalizeTransactionRequest) (*FinalizeTransactionResponse, error)
@@ -142,23 +98,11 @@ type LedgerServer interface {
 type UnimplementedLedgerServer struct {
 }
 
-func (UnimplementedLedgerServer) HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
-}
 func (UnimplementedLedgerServer) InitializeAccount(context.Context, *InitializeAccountRequest) (*InitializeAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitializeAccount not implemented")
 }
-func (UnimplementedLedgerServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
-}
 func (UnimplementedLedgerServer) GetAccounts(context.Context, *GetAccountsRequest) (*GetAccountsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccounts not implemented")
-}
-func (UnimplementedLedgerServer) GetBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
-}
-func (UnimplementedLedgerServer) GetBalances(context.Context, *GetBalancesRequest) (*GetBalancesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBalances not implemented")
 }
 func (UnimplementedLedgerServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTransaction not implemented")
@@ -182,24 +126,6 @@ func RegisterLedgerServer(s grpc.ServiceRegistrar, srv LedgerServer) {
 	s.RegisterService(&Ledger_ServiceDesc, srv)
 }
 
-func _Ledger_HealthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HealthCheckRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LedgerServer).HealthCheck(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pkg.pbs.ledger.v1.Ledger/HealthCheck",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LedgerServer).HealthCheck(ctx, req.(*HealthCheckRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Ledger_InitializeAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(InitializeAccountRequest)
 	if err := dec(in); err != nil {
@@ -218,24 +144,6 @@ func _Ledger_InitializeAccount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Ledger_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LedgerServer).GetAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pkg.pbs.ledger.v1.Ledger/GetAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LedgerServer).GetAccount(ctx, req.(*GetAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Ledger_GetAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountsRequest)
 	if err := dec(in); err != nil {
@@ -250,42 +158,6 @@ func _Ledger_GetAccounts_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(LedgerServer).GetAccounts(ctx, req.(*GetAccountsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Ledger_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBalanceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LedgerServer).GetBalance(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pkg.pbs.ledger.v1.Ledger/GetBalance",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LedgerServer).GetBalance(ctx, req.(*GetBalanceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Ledger_GetBalances_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBalancesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LedgerServer).GetBalances(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pkg.pbs.ledger.v1.Ledger/GetBalances",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LedgerServer).GetBalances(ctx, req.(*GetBalancesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -352,28 +224,12 @@ var Ledger_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*LedgerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "HealthCheck",
-			Handler:    _Ledger_HealthCheck_Handler,
-		},
-		{
 			MethodName: "InitializeAccount",
 			Handler:    _Ledger_InitializeAccount_Handler,
 		},
 		{
-			MethodName: "GetAccount",
-			Handler:    _Ledger_GetAccount_Handler,
-		},
-		{
 			MethodName: "GetAccounts",
 			Handler:    _Ledger_GetAccounts_Handler,
-		},
-		{
-			MethodName: "GetBalance",
-			Handler:    _Ledger_GetBalance_Handler,
-		},
-		{
-			MethodName: "GetBalances",
-			Handler:    _Ledger_GetBalances_Handler,
 		},
 		{
 			MethodName: "CreateTransaction",

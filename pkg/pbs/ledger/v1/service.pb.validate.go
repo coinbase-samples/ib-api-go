@@ -35,212 +35,6 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on HealthCheckRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *HealthCheckRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on HealthCheckRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// HealthCheckRequestMultiError, or nil if none found.
-func (m *HealthCheckRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *HealthCheckRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return HealthCheckRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// HealthCheckRequestMultiError is an error wrapping multiple validation errors
-// returned by HealthCheckRequest.ValidateAll() if the designated constraints
-// aren't met.
-type HealthCheckRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m HealthCheckRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m HealthCheckRequestMultiError) AllErrors() []error { return m }
-
-// HealthCheckRequestValidationError is the validation error returned by
-// HealthCheckRequest.Validate if the designated constraints aren't met.
-type HealthCheckRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e HealthCheckRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e HealthCheckRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e HealthCheckRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e HealthCheckRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e HealthCheckRequestValidationError) ErrorName() string {
-	return "HealthCheckRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e HealthCheckRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sHealthCheckRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = HealthCheckRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = HealthCheckRequestValidationError{}
-
-// Validate checks the field values on HealthCheckResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *HealthCheckResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on HealthCheckResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// HealthCheckResponseMultiError, or nil if none found.
-func (m *HealthCheckResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *HealthCheckResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Status
-
-	if len(errors) > 0 {
-		return HealthCheckResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// HealthCheckResponseMultiError is an error wrapping multiple validation
-// errors returned by HealthCheckResponse.ValidateAll() if the designated
-// constraints aren't met.
-type HealthCheckResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m HealthCheckResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m HealthCheckResponseMultiError) AllErrors() []error { return m }
-
-// HealthCheckResponseValidationError is the validation error returned by
-// HealthCheckResponse.Validate if the designated constraints aren't met.
-type HealthCheckResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e HealthCheckResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e HealthCheckResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e HealthCheckResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e HealthCheckResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e HealthCheckResponseValidationError) ErrorName() string {
-	return "HealthCheckResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e HealthCheckResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sHealthCheckResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = HealthCheckResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = HealthCheckResponseValidationError{}
-
 // Validate checks the field values on InitializeAccountRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -263,11 +57,40 @@ func (m *InitializeAccountRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for PortfolioId
+	if utf8.RuneCountInString(m.GetPortfolioId()) != 36 {
+		err := InitializeAccountRequestValidationError{
+			field:  "PortfolioId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 
-	// no validation rules for UserId
+	}
 
-	// no validation rules for Currency
+	if utf8.RuneCountInString(m.GetUserId()) != 36 {
+		err := InitializeAccountRequestValidationError{
+			field:  "UserId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if utf8.RuneCountInString(m.GetCurrency()) < 3 {
+		err := InitializeAccountRequestValidationError{
+			field:  "Currency",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return InitializeAccountRequestMultiError(errors)
@@ -371,6 +194,17 @@ func (m *InitializeAccountResponse) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetAccount() == nil {
+		err := InitializeAccountResponseValidationError{
+			field:  "Account",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetAccount()).(type) {
 		case interface{ ValidateAll() error }:
@@ -398,6 +232,17 @@ func (m *InitializeAccountResponse) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GetAccountBalance() == nil {
+		err := InitializeAccountResponseValidationError{
+			field:  "AccountBalance",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -509,272 +354,6 @@ var _ interface {
 	ErrorName() string
 } = InitializeAccountResponseValidationError{}
 
-// Validate checks the field values on GetAccountRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *GetAccountRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetAccountRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetAccountRequestMultiError, or nil if none found.
-func (m *GetAccountRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetAccountRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for UserId
-
-	// no validation rules for Currency
-
-	if len(errors) > 0 {
-		return GetAccountRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetAccountRequestMultiError is an error wrapping multiple validation errors
-// returned by GetAccountRequest.ValidateAll() if the designated constraints
-// aren't met.
-type GetAccountRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetAccountRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetAccountRequestMultiError) AllErrors() []error { return m }
-
-// GetAccountRequestValidationError is the validation error returned by
-// GetAccountRequest.Validate if the designated constraints aren't met.
-type GetAccountRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetAccountRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetAccountRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetAccountRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetAccountRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetAccountRequestValidationError) ErrorName() string {
-	return "GetAccountRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetAccountRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetAccountRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetAccountRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetAccountRequestValidationError{}
-
-// Validate checks the field values on GetAccountResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetAccountResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetAccountResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetAccountResponseMultiError, or nil if none found.
-func (m *GetAccountResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetAccountResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetAccount()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetAccountResponseValidationError{
-					field:  "Account",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetAccountResponseValidationError{
-					field:  "Account",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAccount()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetAccountResponseValidationError{
-				field:  "Account",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetAccountBalance()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetAccountResponseValidationError{
-					field:  "AccountBalance",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetAccountResponseValidationError{
-					field:  "AccountBalance",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAccountBalance()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetAccountResponseValidationError{
-				field:  "AccountBalance",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return GetAccountResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetAccountResponseMultiError is an error wrapping multiple validation errors
-// returned by GetAccountResponse.ValidateAll() if the designated constraints
-// aren't met.
-type GetAccountResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetAccountResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetAccountResponseMultiError) AllErrors() []error { return m }
-
-// GetAccountResponseValidationError is the validation error returned by
-// GetAccountResponse.Validate if the designated constraints aren't met.
-type GetAccountResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetAccountResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetAccountResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetAccountResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetAccountResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetAccountResponseValidationError) ErrorName() string {
-	return "GetAccountResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetAccountResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetAccountResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetAccountResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetAccountResponseValidationError{}
-
 // Validate checks the field values on GetAccountsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -797,7 +376,17 @@ func (m *GetAccountsRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserId
+	if utf8.RuneCountInString(m.GetUserId()) != 36 {
+		err := GetAccountsRequestValidationError{
+			field:  "UserId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	if len(errors) > 0 {
 		return GetAccountsRequestMultiError(errors)
@@ -1015,508 +604,6 @@ var _ interface {
 	ErrorName() string
 } = GetAccountsResponseValidationError{}
 
-// Validate checks the field values on GetBalanceRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *GetBalanceRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetBalanceRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetBalanceRequestMultiError, or nil if none found.
-func (m *GetBalanceRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetBalanceRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetId()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetBalanceRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetBalanceRequestValidationError{
-					field:  "Id",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetId()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetBalanceRequestValidationError{
-				field:  "Id",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return GetBalanceRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetBalanceRequestMultiError is an error wrapping multiple validation errors
-// returned by GetBalanceRequest.ValidateAll() if the designated constraints
-// aren't met.
-type GetBalanceRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetBalanceRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetBalanceRequestMultiError) AllErrors() []error { return m }
-
-// GetBalanceRequestValidationError is the validation error returned by
-// GetBalanceRequest.Validate if the designated constraints aren't met.
-type GetBalanceRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetBalanceRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetBalanceRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetBalanceRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetBalanceRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetBalanceRequestValidationError) ErrorName() string {
-	return "GetBalanceRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetBalanceRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetBalanceRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetBalanceRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetBalanceRequestValidationError{}
-
-// Validate checks the field values on GetBalanceResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetBalanceResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetBalanceResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetBalanceResponseMultiError, or nil if none found.
-func (m *GetBalanceResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetBalanceResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetAccountBalance()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetBalanceResponseValidationError{
-					field:  "AccountBalance",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetBalanceResponseValidationError{
-					field:  "AccountBalance",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAccountBalance()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetBalanceResponseValidationError{
-				field:  "AccountBalance",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return GetBalanceResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetBalanceResponseMultiError is an error wrapping multiple validation errors
-// returned by GetBalanceResponse.ValidateAll() if the designated constraints
-// aren't met.
-type GetBalanceResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetBalanceResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetBalanceResponseMultiError) AllErrors() []error { return m }
-
-// GetBalanceResponseValidationError is the validation error returned by
-// GetBalanceResponse.Validate if the designated constraints aren't met.
-type GetBalanceResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetBalanceResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetBalanceResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetBalanceResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetBalanceResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetBalanceResponseValidationError) ErrorName() string {
-	return "GetBalanceResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetBalanceResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetBalanceResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetBalanceResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetBalanceResponseValidationError{}
-
-// Validate checks the field values on GetBalancesRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetBalancesRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetBalancesRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetBalancesRequestMultiError, or nil if none found.
-func (m *GetBalancesRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetBalancesRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for AccountId
-
-	if len(errors) > 0 {
-		return GetBalancesRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetBalancesRequestMultiError is an error wrapping multiple validation errors
-// returned by GetBalancesRequest.ValidateAll() if the designated constraints
-// aren't met.
-type GetBalancesRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetBalancesRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetBalancesRequestMultiError) AllErrors() []error { return m }
-
-// GetBalancesRequestValidationError is the validation error returned by
-// GetBalancesRequest.Validate if the designated constraints aren't met.
-type GetBalancesRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetBalancesRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetBalancesRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetBalancesRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetBalancesRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetBalancesRequestValidationError) ErrorName() string {
-	return "GetBalancesRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetBalancesRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetBalancesRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetBalancesRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetBalancesRequestValidationError{}
-
-// Validate checks the field values on GetBalancesResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetBalancesResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on GetBalancesResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// GetBalancesResponseMultiError, or nil if none found.
-func (m *GetBalancesResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *GetBalancesResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetAccountBalances() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetBalancesResponseValidationError{
-						field:  fmt.Sprintf("AccountBalances[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, GetBalancesResponseValidationError{
-						field:  fmt.Sprintf("AccountBalances[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return GetBalancesResponseValidationError{
-					field:  fmt.Sprintf("AccountBalances[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return GetBalancesResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// GetBalancesResponseMultiError is an error wrapping multiple validation
-// errors returned by GetBalancesResponse.ValidateAll() if the designated
-// constraints aren't met.
-type GetBalancesResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m GetBalancesResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m GetBalancesResponseMultiError) AllErrors() []error { return m }
-
-// GetBalancesResponseValidationError is the validation error returned by
-// GetBalancesResponse.Validate if the designated constraints aren't met.
-type GetBalancesResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e GetBalancesResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e GetBalancesResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e GetBalancesResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e GetBalancesResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e GetBalancesResponseValidationError) ErrorName() string {
-	return "GetBalancesResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e GetBalancesResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetBalancesResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = GetBalancesResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = GetBalancesResponseValidationError{}
-
 // Validate checks the field values on CreateTransactionRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1539,7 +626,28 @@ func (m *CreateTransactionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for OrderId
+	if utf8.RuneCountInString(m.GetOrderId()) != 36 {
+		err := CreateTransactionRequestValidationError{
+			field:  "OrderId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if m.GetSender() == nil {
+		err := CreateTransactionRequestValidationError{
+			field:  "Sender",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetSender()).(type) {
@@ -1568,6 +676,17 @@ func (m *CreateTransactionRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GetReceiver() == nil {
+		err := CreateTransactionRequestValidationError{
+			field:  "Receiver",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -1894,7 +1013,17 @@ func (m *PartialReleaseHoldRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for OrderId
+	if utf8.RuneCountInString(m.GetOrderId()) != 36 {
+		err := PartialReleaseHoldRequestValidationError{
+			field:  "OrderId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	// no validation rules for RequestId
 
@@ -2195,7 +1324,17 @@ func (m *FinalizeTransactionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for OrderId
+	if utf8.RuneCountInString(m.GetOrderId()) != 36 {
+		err := FinalizeTransactionRequestValidationError{
+			field:  "OrderId",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	// no validation rules for RequestId
 
