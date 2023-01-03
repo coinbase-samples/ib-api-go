@@ -7,44 +7,43 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/coinbase-samples/ib-api-go/log"
 	"github.com/coinbase-samples/ib-api-go/model"
-	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
 )
 
 func (m *Repository) ListAssets(ctx context.Context, requestUserId string) ([]model.Asset, error) {
 	var assets []model.Asset
 
-	l := ctxlogrus.Extract(ctx)
-	l.Debugln("fetching assets for user ", requestUserId)
+	log.CtxDebug(ctx, "fetching assets for user ", requestUserId)
 
 	limitAmount := int32(6)
-	out, err := m.Svc.Scan(context.TODO(), &dynamodb.ScanInput{
+	out, err := m.Svc.Scan(context.Background(), &dynamodb.ScanInput{
 		TableName: aws.String(m.App.AssetTableName),
 		Limit:     &limitAmount,
 	})
 
-	l.Debugln("query result for assets", out, err)
+	log.CtxDebugf(ctx, "query result for assets: %v", out)
 
 	if err != nil {
+		log.CtxDebugf(ctx, "error listing assets - %v", err)
 		return assets, err
 	}
 
-	l.Debugln(&out.Items)
+	log.CtxDebugf(ctx, "unmarshalled assets: %v", &out.Items)
 	err = attributevalue.UnmarshalListOfMaps(out.Items, &assets)
 	if err != nil {
 		return assets, err
 	}
-
+	log.CtxDebugf(ctx, "returning final assets: %v", &assets)
 	return assets, nil
 }
 
 func (m *Repository) GetAsset(ctx context.Context, requestUserId, assetId string) (model.Asset, error) {
 	var asset model.Asset
 
-	l := ctxlogrus.Extract(ctx)
-	l.Debugln("fetching assets for user ", requestUserId)
+	log.CtxDebug(ctx, "fetching assets for user ", requestUserId)
 
-	out, err := m.Svc.Query(context.TODO(), &dynamodb.QueryInput{
+	out, err := m.Svc.Query(context.Background(), &dynamodb.QueryInput{
 		TableName:              aws.String(m.App.AssetTableName),
 		KeyConditionExpression: aws.String("assetId = :a"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
@@ -56,12 +55,12 @@ func (m *Repository) GetAsset(ctx context.Context, requestUserId, assetId string
 		return asset, err
 	}
 
-	l.Debugln("order by id found", &out.Items[0])
+	log.CtxDebugf(ctx, "order by id found: %v", &out.Items[0])
 	err = attributevalue.UnmarshalMap(out.Items[0], &asset)
 	if err != nil {
 		return asset, err
 	}
-	l.Debugln("unmarshalled order by id", &asset)
+	log.CtxDebugf(ctx, "returning final asset: %v", &asset)
 
 	return asset, nil
 }

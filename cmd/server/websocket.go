@@ -8,28 +8,30 @@ import (
 	"time"
 
 	"github.com/coinbase-samples/ib-api-go/dba"
+	"github.com/coinbase-samples/ib-api-go/log"
 	"github.com/coinbase-samples/ib-api-go/websocket"
 	"github.com/go-redis/redis"
 )
 
-func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
-	logrusLogger.Debugln("WebSocket Endpoint Hit", r.URL.Query())
+func serveWs(ctx context.Context, pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
+	log.CtxDebug(ctx, "WebSocket Endpoint Hit", r.URL.Query())
 
 	query := r.URL.Query()
 	alias := query.Get("alias")
 	if alias == "" {
-		logrusLogger.Debugln("Missing required connection params", query, alias)
+		log.CtxDebug(ctx, "Missing required connection params", query, alias)
 		return
 	}
 
-	logrusLogger.Debugf("adding new ws connection - %s", alias)
+	log.CtxDebugf(ctx, "adding new ws connection - %s", alias)
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
-		fmt.Fprintf(w, "%+v\n", err)
+		log.CtxWarnf(ctx, "%+v\n%v", w, err)
+		return
 	}
 
 	orderChannelName := fmt.Sprintf("%s-orders", alias)
-	logrusLogger.Warnf("starting subscription - %v", orderChannelName)
+	log.CtxDebugf(ctx, "starting subscription - %v", orderChannelName)
 	orderSub := pool.Redis.Subscribe(orderChannelName)
 	defer orderSub.Close()
 	ch := orderSub.Channel()
@@ -38,11 +40,11 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 		for msg := range ch {
 			mess := websocket.Message{}
 			if err := json.Unmarshal([]byte(msg.Payload), &mess); err != nil {
-				logrusLogger.Warnf("error marshalling order status message - %v", err)
+				log.CtxWarnf(ctx, "error marshalling order status message - %v", err)
 				return
 			}
 
-			logrusLogger.Warnf("order sub message - %v - %v", alias, mess)
+			log.CtxDebugf(ctx, "order sub message - %v - %v", alias, mess)
 			conn.WriteJSON(mess)
 		}
 	}()
@@ -55,7 +57,7 @@ func serveWs(pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
 	}
 
 	//publish initial open/pending orders
-	checkOrdersFromDynamo(client)
+	checkOrdersFromDynamo(ctx, client)
 
 	pool.Register <- client
 	client.Read()
@@ -70,11 +72,11 @@ func assetPriceUpdater(pool websocket.Pool) {
 			select {
 			case <-ticker.C:
 
-				logrusLogger.Debugf("asset price loop for clients: %d", len(pool.Clients))
+				log.Debugf("asset price loop for clients: %d", len(pool.Clients))
 				if len(pool.Clients) > 0 {
 					assets, err := dba.Repo.ListAssets(context.Background(), "")
 					if err != nil {
-						logrusLogger.Warnf("error reading assets for price update - %v", err)
+						log.Warnf("error reading assets for price update - %v", err)
 					} else {
 						body, _ := json.Marshal(assets)
 						message := websocket.Message{Type: "assets", Body: string(body)}
@@ -92,21 +94,20 @@ func assetPriceUpdater(pool websocket.Pool) {
 	}()
 }
 
-func checkOrdersFromDynamo(client *websocket.Client) {
-
+func checkOrdersFromDynamo(ctx context.Context, client *websocket.Client) {
 	orders, err := dba.Repo.ListOrders(context.Background(), client.Alias)
 	if err != nil {
-		logrusLogger.Warnf("error reading orders for price update - %v", err)
+		log.CtxWarnf(ctx, "error reading orders for price update - %v", err)
 	} else {
 		if len(orders) < 1 {
-			logrusLogger.Debugf("skipping order update -%v", orders)
+			log.CtxDebugf(ctx, "skipping order update -%v", orders)
 		} else {
 			body, err := json.Marshal(orders)
 			if err != nil {
-				logrusLogger.Warnf("issue marshalling existing orders - %v", err)
+				log.CtxWarnf(ctx, "issue marshalling existing orders - %v", err)
 			}
 			message := websocket.Message{Type: "orders", Body: string(body)}
-			logrusLogger.Debugf("writing initial order status - %v", message)
+			log.CtxDebugf(ctx, "writing initial order status - %v", message)
 			client.Conn.WriteJSON(message)
 		}
 	}

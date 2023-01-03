@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/coinbase-samples/ib-api-go/config"
-	"go.opencensus.io/plugin/ocgrpc"
+	"github.com/coinbase-samples/ib-api-go/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
@@ -37,35 +37,35 @@ func getProfileConnAddress(app config.AppConfig) string {
 	return fmt.Sprintf("%s:443", app.UserMgrHostname)
 }
 
-func orderConn(app config.AppConfig) (*grpc.ClientConn, error) {
+func orderConn(app config.AppConfig, dialCreds credentials.TransportCredentials) (*grpc.ClientConn, error) {
 	dialOrderConn := getOrderConnAddress(app)
-	clientCreds := getGrpcCredentials(app)
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	logrusLogger.Debugln("order dial", dialOrderConn, md)
+	log.Debug("order dial", dialOrderConn, md)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 
 	conn, err := grpc.DialContext(
 		ctx,
 		dialOrderConn,
-		grpc.WithTransportCredentials(clientCreds),
+		grpc.WithTransportCredentials(dialCreds),
 	)
 	return conn, err
 }
 
-func profileConn(app config.AppConfig) (*grpc.ClientConn, error) {
+func profileConn(app config.AppConfig, dialCreds credentials.TransportCredentials) (*grpc.ClientConn, error) {
 	dialProfileConn := getProfileConnAddress(app)
-	dialCreds := getGrpcCredentials(app)
-	logrusLogger.Debugln("connecting to profile localhost grpc", dialProfileConn)
+
+	md := metadata.New(map[string]string{"x-route-id": app.UserRouteId})
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+	log.Debug("profile dial", dialProfileConn)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 	conn, err := grpc.DialContext(
-		context.Background(),
+		ctx,
 		dialProfileConn,
 		grpc.WithTransportCredentials(dialCreds),
-		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}),
 	)
 	return conn, err
 }

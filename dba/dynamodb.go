@@ -1,10 +1,7 @@
 package dba
 
 import (
-	"context"
-	"fmt"
-
-	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	awsConfig "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/coinbase-samples/ib-api-go/config"
 )
@@ -19,8 +16,8 @@ type Repository struct {
 }
 
 // NewRepo creates a new repository
-func NewRepo(a *config.AppConfig) *Repository {
-	svc := setupService(a)
+func NewRepo(a *config.AppConfig, cfg awsConfig.Config) *Repository {
+	svc := setupService(a, cfg)
 
 	return &Repository{
 		App: a,
@@ -33,16 +30,10 @@ func NewDBA(r *Repository) {
 	Repo = r
 }
 
-func setupService(a *config.AppConfig) *dynamodb.Client {
-	cfg, err := awsConfig.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		// TODO: should handle retries and health statuses
-		fmt.Println("error creating dynamo config", err)
-		return nil
-	}
+func setupService(a *config.AppConfig, cfg awsConfig.Config) *dynamodb.Client {
 	var svc *dynamodb.Client
 
-	if a.Env == "local" {
+	if a.IsLocalEnv() {
 		svc = dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
 			o.EndpointResolver = dynamodb.EndpointResolverFromURL(a.DatabaseEndpoint)
 		})

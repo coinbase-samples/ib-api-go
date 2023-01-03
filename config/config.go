@@ -9,6 +9,7 @@ import (
 type AppConfig struct {
 	Env        string `mapstructure:"ENV_NAME"`
 	LogLevel   string `mapstructure:"LOG_LEVEL"`
+	LogToFile  string `mapstructure:"LOG_TO_FILE"`
 	Region     string `mapstructure:"REGION"`
 	Port       string `mapstructure:"PORT"`
 	ClientId   string `mapstructure:"COGNITO_APP_CLIENT_ID"`
@@ -47,6 +48,7 @@ func Setup(app *AppConfig) {
 	// set defaults
 	viper.SetDefault("ENV_NAME", "local")
 	viper.SetDefault("LOG_LEVEL", "warning")
+	viper.SetDefault("LOG_TO_FILE", "false")
 	viper.SetDefault("REGION", "us-east-1")
 
 	viper.SetDefault("PORT", "8443")

@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/coinbase-samples/ib-api-go/log"
 	"github.com/coinbase-samples/ib-api-go/model"
-	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus/ctxlogrus"
 )
 
 const OrderIdIndex = "OrderIdGsi"
@@ -16,9 +16,8 @@ const OrderIdIndex = "OrderIdGsi"
 func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Order, error) {
 	var orders []model.Order
 
-	l := ctxlogrus.Extract(ctx)
-	l.Debugln("fetching order with ", userId)
-	out, err := m.Svc.Query(context.TODO(), &dynamodb.QueryInput{
+	log.CtxDebug(ctx, "fetching order with ", userId)
+	out, err := m.Svc.Query(context.Background(), &dynamodb.QueryInput{
 		TableName:              aws.String(m.App.ActivityTableName),
 		KeyConditionExpression: aws.String("userId = :a"),
 		FilterExpression:       aws.String("orderStatus = :b OR orderStatus = :c OR orderStatus = :d"),
@@ -30,18 +29,18 @@ func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Ord
 		},
 	})
 
-	l.Debugln("query result for orders", out, err)
+	log.CtxDebug(ctx, "query result for orders", out, err)
 
 	if err != nil {
-		return orders, err
+		return nil, err
 	}
 
-	l.Debugln(&out.Items)
+	log.CtxDebug(ctx, &out.Items)
 	err = attributevalue.UnmarshalListOfMaps(out.Items, &orders)
 	if err != nil {
-		return orders, err
+		return nil, err
 	}
-	l.Debugln("unmarshalled orders", &orders)
+	log.CtxDebug(ctx, "unmarshalled orders", &orders)
 
 	return orders, nil
 }

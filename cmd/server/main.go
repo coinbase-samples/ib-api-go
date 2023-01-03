@@ -7,15 +7,15 @@ import (
 	"os/signal"
 	"time"
 
+	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/coinbase-samples/ib-api-go/auth"
 	"github.com/coinbase-samples/ib-api-go/config"
 	"github.com/coinbase-samples/ib-api-go/dba"
-	log "github.com/sirupsen/logrus"
+	"github.com/coinbase-samples/ib-api-go/log"
 )
 
 var (
-	//setup logrus for interceptor
-	logrusLogger = log.New()
-	wait         time.Duration
+	wait time.Duration
 )
 
 func main() {
@@ -24,24 +24,34 @@ func main() {
 	config.Setup(&app)
 	fmt.Println("starting app with config", app)
 
-	config.LogInit(app, logrusLogger)
+	log.Init(app)
+
+	cfg, err := awsConfig.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		log.Fatalf("error creating dynamo config: %v", err)
+
+	}
+
+	//setup auth client
+	cip := auth.InitAuth(&app, cfg)
+	aw := auth.Middleware{Cip: cip}
 
 	//setup database
-	repo := dba.NewRepo(&app)
+	repo := dba.NewRepo(&app, cfg)
 	dba.NewDBA(repo)
 
-	gwServer, err := setupHttp(app)
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
+	defer cancel()
+
+	gwServer, err := setupHttp(ctx, app, aw)
 	if err != nil {
-		logrusLogger.Warnln("issues setting up http server", err)
+		log.Warn("issues setting up http server", err)
 	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
 	<-c
-
-	ctx, cancel := context.WithTimeout(context.Background(), wait)
-	defer cancel()
 
 	if gwServer != nil {
 		gwServer.Shutdown(ctx)
@@ -50,6 +60,6 @@ func main() {
 	// Optionally, you could run srv.Shutdown in a goroutine and block on
 	// <-ctx.Done() if your application should wait for other services
 	// to finalize based on context cancellation.
-	logrusLogger.Debugln("stopping")
+	log.Debug("stopping")
 	os.Exit(0)
 }
