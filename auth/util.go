@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/coinbase-samples/ib-api-go/log"
-	"github.com/coinbase-samples/ib-usermgr-go/model"
+	"github.com/coinbase-samples/ib-api-go/model"
 )
 
 func addUserToContext(ctx context.Context, user *cognitoidentityprovider.GetUserOutput) context.Context {
