@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"time"
@@ -22,14 +21,13 @@ func main() {
 	var app config.AppConfig
 
 	config.Setup(&app)
-	fmt.Println("starting app with config", app)
 
 	log.Init(app)
+	log.Debugf("starting app with config - %v", app)
 
 	cfg, err := awsConfig.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		log.Fatalf("error creating dynamo config: %v", err)
-
 	}
 
 	//setup auth client

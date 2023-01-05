@@ -2,25 +2,9 @@ package websocket
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 
-	"github.com/go-redis/redis"
-	"github.com/gorilla/websocket"
+	"github.com/coinbase-samples/ib-api-go/log"
 )
-
-type Client struct {
-	ID            string
-	Conn          *websocket.Conn
-	Pool          *Pool
-	Alias         string
-	Subscriptions []*redis.PubSub
-}
-
-type Message struct {
-	Type string `json:"type"`
-	Body string `json:"body"`
-}
 
 func (c *Client) Read() {
 	defer func() {
@@ -34,15 +18,15 @@ func (c *Client) Read() {
 	for {
 		_, p, err := c.Conn.ReadMessage()
 		if err != nil {
-			log.Println(err)
+			log.Errorf("read message error: %v", err)
 			return
 		}
 
 		var message Message
 		err = json.Unmarshal(p, &message)
 		if err != nil {
-			fmt.Println("error:", err)
+			log.Errorf("unmarshal error: - %v", err)
 		}
-		fmt.Printf("%+v", message)
+		log.Debugf("%+v", message)
 	}
 }

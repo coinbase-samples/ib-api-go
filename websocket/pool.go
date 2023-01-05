@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/coinbase-samples/ib-api-go/config"
+	"github.com/coinbase-samples/ib-api-go/log"
 	"github.com/go-redis/redis"
 )
 
@@ -14,22 +15,11 @@ type Pool struct {
 	Clients    map[*Client]bool
 	Broadcast  chan Message
 	Redis      *redis.ClusterClient
+	LogEntry   log.Entry
 }
 
 func NewPool(conf config.AppConfig) *Pool {
-	addrs := []string{fmt.Sprintf("%s:%s", conf.RedisEndpoint, conf.RedisPort)}
-	var redisClient *redis.ClusterClient
-
-	if conf.IsLocalEnv() {
-		redisClient = redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs: addrs,
-		})
-	} else {
-		redisClient = redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs:     addrs,
-			TLSConfig: &tls.Config{},
-		})
-	}
+	redisClient := makeClient(conf)
 
 	return &Pool{
 		Register:   make(chan *Client),
@@ -49,15 +39,30 @@ func (pool *Pool) Start() {
 		case client := <-pool.Unregister:
 
 			delete(pool.Clients, client)
-			fmt.Println("Unregistered client, new Size of Connection Pool: ", len(pool.Clients))
+			log.Debugf("Unregistered client, new Size of Connection Pool: %d", len(pool.Clients))
 
 		// I don't see a use case for broadcast between clients. but leaving in case
 		case message := <-pool.Broadcast:
 			///Send out updated
-			for client, _ := range pool.Clients {
-				fmt.Println("Should send to client?", client.Alias, message)
+			for client := range pool.Clients {
+				log.Debugf("Should send to client? %s - %v", client.Alias, message)
 			}
 		}
 	}
 
+}
+
+func makeClient(conf config.AppConfig) *redis.ClusterClient {
+	addrs := []string{fmt.Sprintf("%s:%s", conf.RedisEndpoint, conf.RedisPort)}
+
+	if conf.IsLocalEnv() {
+		return redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs: addrs,
+		})
+	} else {
+		return redis.NewClusterClient(&redis.ClusterOptions{
+			Addrs:     addrs,
+			TLSConfig: &tls.Config{},
+		})
+	}
 }

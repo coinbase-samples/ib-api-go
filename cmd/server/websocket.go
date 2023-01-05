@@ -14,24 +14,24 @@ import (
 )
 
 func serveWs(ctx context.Context, pool *websocket.Pool, w http.ResponseWriter, r *http.Request) {
-	log.CtxDebug(ctx, "WebSocket Endpoint Hit", r.URL.Query())
+	log.DebugCtx(ctx, "WebSocket Endpoint Hit", r.URL.Query())
 
 	query := r.URL.Query()
 	alias := query.Get("alias")
 	if alias == "" {
-		log.CtxDebug(ctx, "Missing required connection params", query, alias)
+		log.DebugCtx(ctx, "Missing required connection params", query, alias)
 		return
 	}
 
-	log.CtxDebugf(ctx, "adding new ws connection - %s", alias)
+	log.DebugfCtx(ctx, "adding new ws connection - %s", alias)
 	conn, err := websocket.Upgrade(w, r)
 	if err != nil {
-		log.CtxWarnf(ctx, "%+v\n%v", w, err)
+		log.WarnfCtx(ctx, "%+v\n%v", w, err)
 		return
 	}
 
 	orderChannelName := fmt.Sprintf("%s-orders", alias)
-	log.CtxDebugf(ctx, "starting subscription - %v", orderChannelName)
+	log.DebugfCtx(ctx, "starting subscription - %v", orderChannelName)
 	orderSub := pool.Redis.Subscribe(orderChannelName)
 	defer orderSub.Close()
 	ch := orderSub.Channel()
@@ -40,11 +40,11 @@ func serveWs(ctx context.Context, pool *websocket.Pool, w http.ResponseWriter, r
 		for msg := range ch {
 			mess := websocket.Message{}
 			if err := json.Unmarshal([]byte(msg.Payload), &mess); err != nil {
-				log.CtxWarnf(ctx, "error marshalling order status message - %v", err)
+				log.WarnfCtx(ctx, "error marshalling order status message - %v", err)
 				return
 			}
 
-			log.CtxDebugf(ctx, "order sub message - %v - %v", alias, mess)
+			log.DebugfCtx(ctx, "order sub message - %v - %v", alias, mess)
 			conn.WriteJSON(mess)
 		}
 	}()
@@ -97,17 +97,17 @@ func assetPriceUpdater(pool websocket.Pool) {
 func checkOrdersFromDynamo(ctx context.Context, client *websocket.Client) {
 	orders, err := dba.Repo.ListOrders(context.Background(), client.Alias)
 	if err != nil {
-		log.CtxWarnf(ctx, "error reading orders for price update - %v", err)
+		log.WarnfCtx(ctx, "error reading orders for price update - %v", err)
 	} else {
 		if len(orders) < 1 {
-			log.CtxDebugf(ctx, "skipping order update -%v", orders)
+			log.DebugfCtx(ctx, "skipping order update -%v", orders)
 		} else {
 			body, err := json.Marshal(orders)
 			if err != nil {
-				log.CtxWarnf(ctx, "issue marshalling existing orders - %v", err)
+				log.WarnfCtx(ctx, "issue marshalling existing orders - %v", err)
 			}
 			message := websocket.Message{Type: "orders", Body: string(body)}
-			log.CtxDebugf(ctx, "writing initial order status - %v", message)
+			log.DebugfCtx(ctx, "writing initial order status - %v", message)
 			client.Conn.WriteJSON(message)
 		}
 	}

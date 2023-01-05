@@ -43,7 +43,7 @@ func (am *Middleware) InterceptorNew() grpc.UnaryServerInterceptor {
 		}
 
 		token, err := grpc_auth.AuthFromMD(ctx, "bearer")
-		log.CtxDebugf(ctx, "checking token, method: %s token: %s", info.FullMethod, token)
+		log.DebugfCtx(ctx, "checking token, method: %s token: %s", info.FullMethod, token)
 		if err != nil {
 			log.Debugf("no bearer token in metadata - %v", err)
 			return nil, fmt.Errorf("could not find bearer token from metadata: %w", err)
@@ -53,7 +53,7 @@ func (am *Middleware) InterceptorNew() grpc.UnaryServerInterceptor {
 			AccessToken: aws.String(token),
 		})
 		if err != nil {
-			log.CtxDebugf(ctx, "could not validate token - %v", err)
+			log.DebugfCtx(ctx, "could not validate token - %v", err)
 			return nil, fmt.Errorf("could not validate token: %w", err)
 		}
 

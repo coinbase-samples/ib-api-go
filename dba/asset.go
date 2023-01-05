@@ -14,7 +14,7 @@ import (
 func (m *Repository) ListAssets(ctx context.Context, requestUserId string) ([]model.Asset, error) {
 	var assets []model.Asset
 
-	log.CtxDebug(ctx, "fetching assets for user ", requestUserId)
+	log.DebugCtx(ctx, "fetching assets for user ", requestUserId)
 
 	limitAmount := int32(6)
 	out, err := m.Svc.Scan(context.Background(), &dynamodb.ScanInput{
@@ -22,26 +22,26 @@ func (m *Repository) ListAssets(ctx context.Context, requestUserId string) ([]mo
 		Limit:     &limitAmount,
 	})
 
-	log.CtxDebugf(ctx, "query result for assets: %v", out)
+	log.DebugfCtx(ctx, "query result for assets: %v", out)
 
 	if err != nil {
-		log.CtxDebugf(ctx, "error listing assets - %v", err)
+		log.DebugfCtx(ctx, "error listing assets - %v", err)
 		return assets, err
 	}
 
-	log.CtxDebugf(ctx, "unmarshalled assets: %v", &out.Items)
+	log.DebugfCtx(ctx, "unmarshalled assets: %v", &out.Items)
 	err = attributevalue.UnmarshalListOfMaps(out.Items, &assets)
 	if err != nil {
 		return assets, err
 	}
-	log.CtxDebugf(ctx, "returning final assets: %v", &assets)
+	log.DebugfCtx(ctx, "returning final assets: %v", &assets)
 	return assets, nil
 }
 
 func (m *Repository) GetAsset(ctx context.Context, requestUserId, assetId string) (model.Asset, error) {
 	var asset model.Asset
 
-	log.CtxDebug(ctx, "fetching assets for user ", requestUserId)
+	log.DebugCtx(ctx, "fetching assets for user ", requestUserId)
 
 	out, err := m.Svc.Query(context.Background(), &dynamodb.QueryInput{
 		TableName:              aws.String(m.App.AssetTableName),
@@ -55,12 +55,12 @@ func (m *Repository) GetAsset(ctx context.Context, requestUserId, assetId string
 		return asset, err
 	}
 
-	log.CtxDebugf(ctx, "order by id found: %v", &out.Items[0])
+	log.DebugfCtx(ctx, "order by id found: %v", &out.Items[0])
 	err = attributevalue.UnmarshalMap(out.Items[0], &asset)
 	if err != nil {
 		return asset, err
 	}
-	log.CtxDebugf(ctx, "returning final asset: %v", &asset)
+	log.DebugfCtx(ctx, "returning final asset: %v", &asset)
 
 	return asset, nil
 }

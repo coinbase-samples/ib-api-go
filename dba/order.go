@@ -16,7 +16,7 @@ const OrderIdIndex = "OrderIdGsi"
 func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Order, error) {
 	var orders []model.Order
 
-	log.CtxDebug(ctx, "fetching order with ", userId)
+	log.DebugCtx(ctx, "fetching order with ", userId)
 	out, err := m.Svc.Query(context.Background(), &dynamodb.QueryInput{
 		TableName:              aws.String(m.App.ActivityTableName),
 		KeyConditionExpression: aws.String("userId = :a"),
@@ -29,18 +29,18 @@ func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Ord
 		},
 	})
 
-	log.CtxDebug(ctx, "query result for orders", out, err)
+	log.DebugCtx(ctx, "query result for orders", out, err)
 
 	if err != nil {
 		return nil, err
 	}
 
-	log.CtxDebug(ctx, &out.Items)
+	log.DebugCtx(ctx, &out.Items)
 	err = attributevalue.UnmarshalListOfMaps(out.Items, &orders)
 	if err != nil {
 		return nil, err
 	}
-	log.CtxDebug(ctx, "unmarshalled orders", &orders)
+	log.DebugCtx(ctx, "unmarshalled orders", &orders)
 
 	return orders, nil
 }

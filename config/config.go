@@ -6,15 +6,27 @@ import (
 	"github.com/spf13/viper"
 )
 
+// TODO move to util pkg
+type BaseConfig struct {
+	Env       string `mapstructure:"ENV_NAME"`
+	LogLevel  string `mapstructure:"LOG_LEVEL"`
+	LogToFile string `mapstructure:"LOG_TO_FILE"`
+	Region    string `mapstructure:"REGION"`
+	Port      string `mapstructure:"PORT"`
+	GrpcPort  string `mapstructure:"GRPC_PORT"`
+}
+
+func UnmarshalBase(b *BaseConfig) {
+	err := viper.Unmarshal(&b)
+	if err != nil {
+		fmt.Printf("Cannot parse env file %v\n", err)
+	}
+}
+
 type AppConfig struct {
-	Env        string `mapstructure:"ENV_NAME"`
-	LogLevel   string `mapstructure:"LOG_LEVEL"`
-	LogToFile  string `mapstructure:"LOG_TO_FILE"`
-	Region     string `mapstructure:"REGION"`
-	Port       string `mapstructure:"PORT"`
+	BaseConfig
 	ClientId   string `mapstructure:"COGNITO_APP_CLIENT_ID"`
 	UserPoolId string `mapstructure:"COGNITO_USER_POOL_ID"`
-	GrpcPort   string `mapstructure:"GRPC_PORT"`
 
 	OrderGrpcPort    string `mapstructure:"ORDER_GRPC_PORT"`
 	OrderRouteId     string `mapstructure:"ORDER_MGR_ROUTE_ID"`
@@ -34,7 +46,8 @@ type AppConfig struct {
 }
 
 func (a AppConfig) IsLocalEnv() bool {
-	return a.Env == "local"
+	fmt.Println(a.Env)
+	return a.BaseConfig.Env == "local"
 }
 
 func Setup(app *AppConfig) {
@@ -50,15 +63,15 @@ func Setup(app *AppConfig) {
 	viper.SetDefault("LOG_LEVEL", "warning")
 	viper.SetDefault("LOG_TO_FILE", "false")
 	viper.SetDefault("REGION", "us-east-1")
-
 	viper.SetDefault("PORT", "8443")
 	viper.SetDefault("GRPC_PORT", "8449")
-	viper.SetDefault("ORDER_GRPC_PORT", "8444")
-	viper.SetDefault("USER_GRPC_PORT", "8451")
 
+	viper.SetDefault("ORDER_GRPC_PORT", "8444")
 	viper.SetDefault("ORDER_MGR_HOSTNAME", "localhost")
-	viper.SetDefault("USER_MGR_HOSTNAME", "localhost")
 	viper.SetDefault("ORDER_MGR_ROUTE_ID", "ordermgr")
+
+	viper.SetDefault("USER_GRPC_PORT", "8451")
+	viper.SetDefault("USER_MGR_HOSTNAME", "localhost")
 	viper.SetDefault("USER_MGR_ROUTE_ID", "usermgr")
 
 	viper.SetDefault("DB_ENDPOINT", "http://localhost:4566")
@@ -78,4 +91,5 @@ func Setup(app *AppConfig) {
 	if err != nil {
 		fmt.Printf("Cannot parse env file %v\n", err)
 	}
+	UnmarshalBase(&app.BaseConfig)
 }
