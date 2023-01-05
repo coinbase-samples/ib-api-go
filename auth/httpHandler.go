@@ -14,7 +14,8 @@ func (am *Middleware) MakeHttpHandler() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// allow health checks
-			if r.RequestURI == "/health" {
+			// TODO move ws to check bearer
+			if r.RequestURI == "/health" || strings.Contains(r.RequestURI, "/ws?alias=") {
 				next.ServeHTTP(w, r)
 			}
 
@@ -22,9 +23,9 @@ func (am *Middleware) MakeHttpHandler() func(http.Handler) http.Handler {
 			// Check header for bearer auth: "Authorization: Bearer <access token>"
 			authorization := r.Header.Get("Authorization")
 			bearerToken := extractBearerToken(authorization)
-			log.CtxDebugf(ctx, "got bearer token: %s", bearerToken)
+			log.DebugfCtx(ctx, "got bearer token: %s", bearerToken)
 			if len(bearerToken) == 0 {
-				log.CtxDebug(ctx, "missing bearer token")
+				log.DebugCtx(ctx, "missing bearer token")
 				unauthenticatedResponse(w)
 				return
 			}
@@ -34,11 +35,11 @@ func (am *Middleware) MakeHttpHandler() func(http.Handler) http.Handler {
 			})
 
 			if err != nil {
-				log.CtxDebugf(ctx, "invalid bearer token: %v", err)
+				log.DebugfCtx(ctx, "invalid bearer token: %v", err)
 				unauthenticatedResponse(w)
 				return
 			}
-			log.CtxDebugf(ctx, "fetched cognito user: %v", user)
+			log.DebugfCtx(ctx, "fetched cognito user: %v", user)
 			r = r.WithContext(addUserToContext(ctx, user))
 			next.ServeHTTP(w, r)
 		})
