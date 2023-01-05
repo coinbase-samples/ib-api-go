@@ -95,7 +95,7 @@ func makeContextLogger() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			l := log.NewEntry()
-			requestId := uuid.New()
+			requestId := uuid.New().String()
 			ctx := log.ToContext(
 				context.WithValue(r.Context(), model.RequestCtxKey, requestId),
 				l.WithField("requestId", requestId),
