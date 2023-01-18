@@ -46,7 +46,6 @@ type AppConfig struct {
 }
 
 func (a AppConfig) IsLocalEnv() bool {
-	fmt.Println(a.Env)
 	return a.BaseConfig.Env == "local"
 }
 

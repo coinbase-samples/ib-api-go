@@ -9,15 +9,6 @@ import (
 	"github.com/go-redis/redis"
 )
 
-type Pool struct {
-	Register   chan *Client
-	Unregister chan *Client
-	Clients    map[*Client]bool
-	Broadcast  chan Message
-	Redis      *redis.ClusterClient
-	LogEntry   log.Entry
-}
-
 func NewPool(conf config.AppConfig) *Pool {
 	redisClient := makeClient(conf)
 

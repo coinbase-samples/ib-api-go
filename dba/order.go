@@ -2,6 +2,7 @@ package dba
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -13,7 +14,7 @@ import (
 
 const OrderIdIndex = "OrderIdGsi"
 
-func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Order, error) {
+func (m *DynamoRepository) ListOrders(ctx context.Context, userId string) ([]model.Order, error) {
 	var orders []model.Order
 
 	log.DebugCtx(ctx, "fetching order with ", userId)
@@ -32,13 +33,14 @@ func (m *Repository) ListOrders(ctx context.Context, userId string) ([]model.Ord
 	log.DebugCtx(ctx, "query result for orders", out, err)
 
 	if err != nil {
-		return nil, err
+		log.WarnfCtx(ctx, "error listing orders for %s - %v", userId, err)
+		return nil, fmt.Errorf("dynamodb could not query: %w", err)
 	}
 
 	log.DebugCtx(ctx, &out.Items)
 	err = attributevalue.UnmarshalListOfMaps(out.Items, &orders)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("could not unmarshal items: %w", err)
 	}
 	log.DebugCtx(ctx, "unmarshalled orders", &orders)
 

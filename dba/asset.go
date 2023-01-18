@@ -2,6 +2,7 @@ package dba
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -11,7 +12,7 @@ import (
 	"github.com/coinbase-samples/ib-api-go/model"
 )
 
-func (m *Repository) ListAssets(ctx context.Context, requestUserId string) ([]model.Asset, error) {
+func (m *DynamoRepository) ListAssets(ctx context.Context, requestUserId string) ([]model.Asset, error) {
 	var assets []model.Asset
 
 	log.DebugCtx(ctx, "fetching assets for user ", requestUserId)
@@ -25,20 +26,20 @@ func (m *Repository) ListAssets(ctx context.Context, requestUserId string) ([]mo
 	log.DebugfCtx(ctx, "query result for assets: %v", out)
 
 	if err != nil {
-		log.DebugfCtx(ctx, "error listing assets - %v", err)
-		return assets, err
+		log.WarnfCtx(ctx, "error listing assets - %v", err)
+		return nil, fmt.Errorf("dynamodb could not scan: %w", err)
 	}
 
 	log.DebugfCtx(ctx, "unmarshalled assets: %v", &out.Items)
 	err = attributevalue.UnmarshalListOfMaps(out.Items, &assets)
 	if err != nil {
-		return assets, err
+		return nil, fmt.Errorf("could not unmarshal items: %w", err)
 	}
 	log.DebugfCtx(ctx, "returning final assets: %v", &assets)
 	return assets, nil
 }
 
-func (m *Repository) GetAsset(ctx context.Context, requestUserId, assetId string) (model.Asset, error) {
+func (m *DynamoRepository) GetAsset(ctx context.Context, requestUserId, assetId string) (model.Asset, error) {
 	var asset model.Asset
 
 	log.DebugCtx(ctx, "fetching assets for user ", requestUserId)
@@ -52,13 +53,14 @@ func (m *Repository) GetAsset(ctx context.Context, requestUserId, assetId string
 	})
 
 	if err != nil {
-		return asset, err
+		log.WarnfCtx(ctx, "error fetching asset %s - %v", assetId, err)
+		return asset, fmt.Errorf("dynamodb could not query: %w", err)
 	}
 
 	log.DebugfCtx(ctx, "order by id found: %v", &out.Items[0])
 	err = attributevalue.UnmarshalMap(out.Items[0], &asset)
 	if err != nil {
-		return asset, err
+		return asset, fmt.Errorf("could not unmarshal item: %w", err)
 	}
 	log.DebugfCtx(ctx, "returning final asset: %v", &asset)
 
