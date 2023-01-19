@@ -3,6 +3,7 @@ package websocket
 import (
 	"crypto/tls"
 	"fmt"
+	"sync"
 
 	"github.com/coinbase-samples/ib-api-go/config"
 	"github.com/coinbase-samples/ib-api-go/log"
@@ -16,8 +17,8 @@ func NewPool(conf config.AppConfig) *Pool {
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		Clients:    make(map[*Client]bool),
-		Broadcast:  make(chan Message),
 		Redis:      redisClient,
+		Wait:       &sync.WaitGroup{},
 	}
 }
 
@@ -26,18 +27,12 @@ func (pool *Pool) Start() {
 		select {
 		case client := <-pool.Register:
 			pool.Clients[client] = true
-
+			log.Debugf("registered new client: %s", client.Alias)
+			pool.Wait.Done()
 		case client := <-pool.Unregister:
-
 			delete(pool.Clients, client)
-			log.Debugf("Unregistered client, new Size of Connection Pool: %d", len(pool.Clients))
-
-		// I don't see a use case for broadcast between clients. but leaving in case
-		case message := <-pool.Broadcast:
-			///Send out updated
-			for client := range pool.Clients {
-				log.Debugf("Should send to client? %s - %v", client.Alias, message)
-			}
+			log.Debugf("Unregistered client: %s, new Size of Connection Pool: %d", client.ID, len(pool.Clients))
+			pool.Wait.Done()
 		}
 	}
 
