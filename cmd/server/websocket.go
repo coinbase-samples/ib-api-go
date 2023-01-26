@@ -58,7 +58,7 @@ func serveWs(ctx context.Context, pool *websocket.Pool, w http.ResponseWriter, r
 
 	//publish initial open/pending orders
 	checkOrdersFromDynamo(ctx, client)
-
+	pool.Wait.Add(2)
 	pool.Register <- client
 	client.Read()
 }

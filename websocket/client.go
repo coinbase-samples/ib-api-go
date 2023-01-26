@@ -11,6 +11,7 @@ func (c *Client) Read() {
 		for _, sub := range c.Subscriptions {
 			sub.Close()
 		}
+		c.Pool.Wait.Add(1)
 		c.Pool.Unregister <- c
 		c.Conn.Close()
 	}()
