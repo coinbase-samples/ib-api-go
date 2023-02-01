@@ -59,7 +59,7 @@ func setupHttp(ctx context.Context, app config.AppConfig, aw auth.Middleware) (*
 	log.Debugf("starting gRPC-Gateway on - %v", app.Port)
 
 	go func() {
-		if app.Env == "local" {
+		if app.IsLocalEnv() {
 			if err := gwServer.ListenAndServe(); err != nil {
 				log.Fatal("ListenAndServe: ", err)
 			}
