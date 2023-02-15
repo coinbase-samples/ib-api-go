@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 - Present Coinbase Global, Inc.
+ * Copyright 2022-present Coinbase Global, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,6 @@ func (am *Middleware) InterceptorNew() grpc.UnaryServerInterceptor {
 			return nil, fmt.Errorf("could not validate token: %w", err)
 		}
 
-		ctx = addUserToContext(ctx, user)
-		return handler(ctx, req)
+		return handler(addUserToContext(ctx, user), req)
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 - Present Coinbase Global, Inc.
+ * Copyright 2022-present Coinbase Global, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -40,8 +41,7 @@ func (am *Middleware) MakeHttpHandler() func(http.Handler) http.Handler {
 			authorization := r.Header.Get("Authorization")
 			bearerToken := extractBearerToken(authorization)
 			if len(bearerToken) == 0 {
-				log.DebugCtx(ctx, "missing bearer token")
-				unauthenticatedResponse(w)
+				unauthenticatedResponse(ctx, w, "missing bearer token")
 				return
 			}
 
@@ -50,8 +50,7 @@ func (am *Middleware) MakeHttpHandler() func(http.Handler) http.Handler {
 			})
 
 			if err != nil {
-				log.DebugfCtx(ctx, "invalid bearer token: %v", err)
-				unauthenticatedResponse(w)
+				unauthenticatedResponse(ctx, w, fmt.Sprintf("invalid bearer token: %s", err.Error()))
 				return
 			}
 			r = r.WithContext(addUserToContext(ctx, user))
@@ -60,7 +59,8 @@ func (am *Middleware) MakeHttpHandler() func(http.Handler) http.Handler {
 	}
 }
 
-func unauthenticatedResponse(w http.ResponseWriter) {
+func unauthenticatedResponse(ctx context.Context, w http.ResponseWriter, logMsg string) {
+	log.DebugCtx(ctx, logMsg)
 	w.WriteHeader(401)
 	w.Write([]byte("unauthenticated"))
 }

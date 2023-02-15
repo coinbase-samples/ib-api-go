@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 - Present Coinbase Global, Inc.
+ * Copyright 2022-present Coinbase Global, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,10 +70,4 @@ func main() {
 	if gwServer != nil {
 		gwServer.Shutdown(ctx)
 	}
-
-	// Optionally, you could run srv.Shutdown in a goroutine and block on
-	// <-ctx.Done() if your application should wait for other services
-	// to finalize based on context cancellation.
-	log.Debug("stopping")
-	os.Exit(0)
 }
