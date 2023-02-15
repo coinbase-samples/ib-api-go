@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Coinbase Global, Inc.
+ * Copyright 2022 - Present Coinbase Global, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ func (am *Middleware) InterceptorNew() grpc.UnaryServerInterceptor {
 		}
 
 		token, err := grpc_auth.AuthFromMD(ctx, "bearer")
-		log.DebugfCtx(ctx, "checking token, method: %s token: %s", info.FullMethod, token)
+		log.DebugfCtx(ctx, "checking token, method: %s", info.FullMethod)
 		if err != nil {
 			log.Debugf("no bearer token in metadata - %v", err)
 			return nil, fmt.Errorf("could not find bearer token from metadata: %w", err)

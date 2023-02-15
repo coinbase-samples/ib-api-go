@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 - Present Coinbase Global, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package main
 
 import (
@@ -42,16 +58,15 @@ func orderConn(app config.AppConfig, dialCreds credentials.TransportCredentials)
 
 	md := metadata.New(map[string]string{"x-route-id": app.OrderRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	log.Debug("order dial", dialOrderConn, md)
+	log.Debugf("order dial - %v, %v", dialOrderConn, md)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
 
-	conn, err := grpc.DialContext(
+	return grpc.DialContext(
 		ctx,
 		dialOrderConn,
 		grpc.WithTransportCredentials(dialCreds),
 	)
-	return conn, err
 }
 
 func profileConn(app config.AppConfig, dialCreds credentials.TransportCredentials) (*grpc.ClientConn, error) {
@@ -59,13 +74,12 @@ func profileConn(app config.AppConfig, dialCreds credentials.TransportCredential
 
 	md := metadata.New(map[string]string{"x-route-id": app.UserRouteId})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
-	log.Debug("profile dial", dialProfileConn)
+	log.Debugf("profile dial - %v", dialProfileConn)
 	// Create a client connection to the gRPC server we just started
 	// This is where the gRPC-Gateway proxies the requests
-	conn, err := grpc.DialContext(
+	return grpc.DialContext(
 		ctx,
 		dialProfileConn,
 		grpc.WithTransportCredentials(dialCreds),
 	)
-	return conn, err
 }

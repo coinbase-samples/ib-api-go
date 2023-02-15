@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Coinbase Global, Inc.
+ * Copyright 2022 - Present Coinbase Global, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ func TestSetup(t *testing.T) {
 
 	dr := NewRepo(&app, cfg)
 
-	if dr.App.Env != "local" {
+	if dr.App.IsLocalEnv() {
 		t.Fatal("did not correctly set config")
 	}
 

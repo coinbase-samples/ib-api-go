@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 - Present Coinbase Global, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package main
 
 import (
@@ -59,7 +75,7 @@ func setupHttp(ctx context.Context, app config.AppConfig, aw auth.Middleware) (*
 	log.Debugf("starting gRPC-Gateway on - %v", app.Port)
 
 	go func() {
-		if app.Env == "local" {
+		if app.IsLocalEnv() {
 			if err := gwServer.ListenAndServe(); err != nil {
 				log.Fatal("ListenAndServe: ", err)
 			}
@@ -78,13 +94,8 @@ func setupHttp(ctx context.Context, app config.AppConfig, aw auth.Middleware) (*
 func makeCorsHandler(ctx context.Context, app config.AppConfig) func(http.Handler) http.Handler {
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{
-		"https://api.neoworks.dev",
-		"https://dev.neoworks.xyz",
-		"https://api-dev.neoworks.xyz",
-		fmt.Sprintf("https://localhost:%s", app.Port),
-		fmt.Sprintf("http://localhost:%s", app.Port),
-		"http://localhost:4200",
-		"https://localhost:4200",
+		app.ExternalHostName,
+		app.ExternalApiHostName,
 	})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	log.Debugf("setting cors headers - %v - %v - %v", originsOk, headersOk, methodsOk)
@@ -107,20 +118,19 @@ func makeContextLogger() func(http.Handler) http.Handler {
 }
 
 func registerServiceHandlers(ctx context.Context, gwmux *runtime.ServeMux, pConn *grpc.ClientConn, oConn *grpc.ClientConn) {
-	err := profile.RegisterProfileServiceHandler(context.Background(), gwmux, pConn)
-	if err != nil {
+	if err := profile.RegisterProfileServiceHandler(context.Background(), gwmux, pConn); err != nil {
 		log.Fatal("Failed to register profile:", err)
 	}
-	err = order.RegisterOrderServiceHandler(context.Background(), gwmux, oConn)
-	if err != nil {
+
+	if err := order.RegisterOrderServiceHandler(context.Background(), gwmux, oConn); err != nil {
 		log.Fatal("Failed to register order:", err)
 	}
-	err = balance.RegisterBalanceServiceHandler(context.Background(), gwmux, oConn)
-	if err != nil {
+
+	if err := balance.RegisterBalanceServiceHandler(context.Background(), gwmux, oConn); err != nil {
 		log.Fatal("Failed to register balance:", err)
 	}
-	err = asset.RegisterAssetServiceHandler(context.Background(), gwmux, oConn)
-	if err != nil {
+
+	if err := asset.RegisterAssetServiceHandler(context.Background(), gwmux, oConn); err != nil {
 		log.Fatal("Failed to register asset:", err)
 	}
 }
@@ -159,16 +169,16 @@ func makeMetadataOption(app config.AppConfig) runtime.ServeMuxOption {
 
 		if strings.HasPrefix(r.URL.String(), "/v1/profile") {
 			md["x-route-id"] = app.UserRouteId
-			log.Debug("/v1/profile adding profile route id", app.UserRouteId)
+			log.Debugf("/v1/profile adding profile route id - %v", app.UserRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/order") {
 			md["x-route-id"] = app.OrderRouteId
-			log.Debug("/v1/order adding order route id", app.OrderRouteId)
+			log.Debugf("/v1/order adding order route id - %v", app.OrderRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/balances") {
 			md["x-route-id"] = app.OrderRouteId
-			log.Debug("/v1/balances adding order route id", app.OrderRouteId)
+			log.Debugf("/v1/balances adding order route id - %v", app.OrderRouteId)
 		} else if strings.HasPrefix(r.URL.String(), "/v1/assets") {
 			md["x-route-id"] = app.OrderRouteId
-			log.Debug("/v1/assets adding order route id", app.OrderRouteId)
+			log.Debugf("/v1/assets adding order route id - %v", app.OrderRouteId)
 		} else {
 			log.Warnf("%s is an unknown route", r.URL.String())
 		}

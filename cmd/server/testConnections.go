@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 - Present Coinbase Global, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package main
 
 import (
@@ -25,9 +41,9 @@ func testProfileDial(app config.AppConfig) {
 	defer conn.Close()
 	c := profile.NewProfileServiceClient(conn)
 
-	var testId = "37d10e18-34a2-4bd2-b7bc-b8e6dd6358f1"
+	var testUserId = "37d10e18-34a2-4bd2-b7bc-b8e6dd6358f1"
 	if app.IsLocalEnv() {
-		testId = "c7e34d37-f678-4096-94f7-3cad7d3258b9"
+		testUserId = "c7e34d37-f678-4096-94f7-3cad7d3258b9"
 	}
 
 	// Contact the server and print out its response.
@@ -35,8 +51,8 @@ func testProfileDial(app config.AppConfig) {
 	defer cancel()
 	md := metadata.New(map[string]string{"x-route-id": app.UserRouteId})
 	ctx = metadata.NewOutgoingContext(ctx, md)
-	log.Debugf("dialing profile with - %s - %s - %v", dialProfileConn, testId, ctx)
-	r, err := c.ReadProfile(ctx, &profile.ReadProfileRequest{Id: testId})
+	log.Debugf("dialing profile with - %s - %s - %v", dialProfileConn, testUserId, ctx)
+	r, err := c.ReadProfile(ctx, &profile.ReadProfileRequest{Id: testUserId})
 	grpc.EnableTracing = false
 
 	if err != nil {
