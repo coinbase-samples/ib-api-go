@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package pkg.pbs.balance.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/balance/v1";
+
+message ListBalancesRequest {
+  string id = 1 [(validate.rules).string.len = 36];
+}
+
+message ListBalancesResponse {
+  repeated AccountAndBalance data = 1;
+}
+
+message AccountAndBalance {
+  string userId = 1;
+  string currency = 2;
+  string balance = 3;
+  string hold = 4;
+  string available = 5;
+  google.protobuf.Timestamp balanceAt = 6;
+  string fiatValue = 7;
+}
+
+service BalanceService {
+  rpc ListBalances(ListBalancesRequest) returns (ListBalancesResponse) {
+    option (google.api.http) = {
+      get: "/v1/balances/{id}"
+    };
+  }
+}

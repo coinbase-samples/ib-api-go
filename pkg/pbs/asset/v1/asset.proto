@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package pkg.pbs.asset.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/coinbase-samples/ib-ordermgr-go/pkg/pbs/asset/v1";
+
+message ListAssetsRequest {}
+
+message ListAssetsResponse {
+  repeated Asset data = 1;
+}
+
+message Asset {
+  string assetId = 1;
+  string ticker = 2;
+  string name = 3;
+  string minTransactionAmount = 4;
+  string maxTransactionAmount = 5;
+  string highOffer = 6;
+  string lowBid = 7;
+  string slippage = 8;
+  string spread = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  string marketCap = 11;
+  string volume = 12;
+  string supply = 13;
+  string direction = 14;
+}
+
+message GetAssetRequest {
+  string id = 1 [(validate.rules).string.len = 36];
+}
+
+message GetAssetResponse {
+  Asset data = 1;
+}
+
+service AssetService {
+  rpc ListAssets(ListAssetsRequest) returns (ListAssetsResponse) {
+    option (google.api.http) = {
+      get: "/v1/assets"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "bearer"
+        }
+      }
+    };
+  }
+
+  rpc GetAsset(GetAssetRequest) returns (GetAssetResponse) {
+    option (google.api.http) = {
+      get: "/v1/assets/{id}"
+    };
+  }
+}
